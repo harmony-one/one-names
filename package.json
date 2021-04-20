@@ -1,0 +1,47 @@
+{
+  "name": "nuxt-web3-boilerplate",
+  "version": "1.0.0",
+  "description": "Nuxt.js and web3 template project",
+  "author": "pyyding <kaspar.pyyding@gmail.com>",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "lintfix": "eslint --fix --ext .js,.vue --ignore-path .gitignore --ignore-pattern migrations/ --ignore-pattern test/ .",
+    "precommit": "npm run lint",
+    "prepublishOnly": "truffle compile && truffle networks --clean"
+  },
+  "dependencies": {
+    "@ensdomains/buffer": "0.0.10",
+    "@ensdomains/dnssec-oracle": "^0.2.0",
+    "@ensdomains/ens": "^0.6.0",
+    "@ensdomains/root": "^0.2.0",
+    "@harmony-js/contract": "^0.1.56",
+    "@harmony-js/core": "^0.1.57",
+    "@harmony-js/utils": "^0.1.56",
+    "@truffle/hdwallet-provider": "^1.2.6",
+    "bluebird": "^3.7.2",
+    "dotenv": "^8.2.0",
+    "eth-ens-namehash": "^2.0.8",
+    "js-sha3": "^0.8.0",
+    "nuxt": "^2.12.0",
+    "solium": "^1.2.5",
+    "truffle-contract": "^4.0.31",
+    "web3": "^1.3.5",
+    "web3-eth-abi": "^1.3.5",
+    "websocket": "^1.0.26"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-vue": "^4.5.0",
+    "prettier": "^1.12.1"
+  }
+}
