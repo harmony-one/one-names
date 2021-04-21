@@ -1,11 +1,5 @@
 [
   {
-    "name": "safe",
-    "path": "/safe",
-    "component": "/Users/giv/Documents/workspace/harmony/nuxt/src/pages/safe.vue",
-    "chunkName": "pages/safe"
-  },
-  {
     "name": "index",
     "path": "/",
     "component": "/Users/giv/Documents/workspace/harmony/nuxt/src/pages/index.vue",

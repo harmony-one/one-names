@@ -1,7 +1,7 @@
 import userStore from './userStore'
 import { default as contract } from 'truffle-contract'
 import { default as namehash } from 'eth-ens-namehash'
-import web3 from '~/plugins/web3'
+import Web3 from 'web3'
 import { default as Promise } from 'bluebird'
 import { keccak_256 as sha3 } from 'js-sha3'
 const utils = require('web3-utils')
@@ -13,10 +13,7 @@ const ensAddress = '0x8658177435d4e2f9cE0E651115995757E6b542e6'
 const referrerAddress = '0xFbE0741bC1B52dD723A6bfA145E0a15803AC9581'
 const defaultSubdomainRegistrar = '0x29770aC8cEEfad98C928c5A7142eDBc4c5f8A4a2'
 
-const domainnames = [
-	{ name: '420', version: '1.0' },
-	{ name: 'crazy-test', version: '1.0' }
-]
+const domainnames = [{ name: 'crazy-test', version: '1.0' }]
 
 var SubdomainRegistrar = contract(subdomainregistrar_artifacts)
 var ENS = contract(ens_artifacts)
@@ -70,6 +67,7 @@ export const actions = {
 		return walletInstance.name
 	},
 	async init() {
+		web3 = new Web3(ethereum)
 		SubdomainRegistrar.setProvider(web3.currentProvider)
 		ENS.setProvider(web3.currentProvider)
 
@@ -116,8 +114,8 @@ export const actions = {
 
 		var info = await registrarVersions[domain.version].query(domain, subdomain)
 
-		const accounts = await harmony.getAccount()
-		// const accounts = await ethereum.enable()
+		// const accounts = await harmony.getAccount()
+		const accounts = await ethereum.enable()
 
 		var tx = await registrarVersions[domain.version].register(
 			domain,

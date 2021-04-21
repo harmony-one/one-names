@@ -13,7 +13,7 @@ import { createStore } from './store.js'
 
 /* Plugins */
 
-import nuxt_plugin_web3_0ad4849c from 'nuxt_plugin_web3_0ad4849c' // Source: ../src/plugins/web3.js (mode: 'all')
+import nuxt_plugin_subdomain_f611dd8e from 'nuxt_plugin_subdomain_f611dd8e' // Source: ../src/plugins/subdomain.js (mode: 'all')
 
 // Component: <ClientOnly>
 Vue.component(ClientOnly.name, ClientOnly)
@@ -78,7 +78,7 @@ async function createApp(ssrContext, config = {}) {
   // here we inject the router and store to all child components,
   // making them available everywhere as `this.$router` and `this.$store`.
   const app = {
-    head: {"title":"OneName","meta":[],"link":[],"style":[],"script":[]},
+    head: {"title":"OneNames","meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":"OneNames."}],"link":[{"rel":"stylesheet","href":"https:\u002F\u002Ffonts.googleapis.com\u002Fcss?family=Overpass:100,200,300,400,600,700,800,900|Overpass+Mono:300,400"},{"rel":"stylesheet","href":"https:\u002F\u002Fcdnjs.cloudflare.com\u002Fajax\u002Flibs\u002Ffont-awesome\u002F4.7.0\u002Fcss\u002Ffont-awesome.min.css"}],"style":[],"script":[]},
 
     store,
     router,
@@ -207,8 +207,8 @@ async function createApp(ssrContext, config = {}) {
   }
   // Plugin execution
 
-  if (typeof nuxt_plugin_web3_0ad4849c === 'function') {
-    await nuxt_plugin_web3_0ad4849c(app.context, inject)
+  if (typeof nuxt_plugin_subdomain_f611dd8e === 'function') {
+    await nuxt_plugin_subdomain_f611dd8e(app.context, inject)
   }
 
   // Lock enablePreview in context
