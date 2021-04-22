@@ -20,6 +20,7 @@ export default {
   watch: {
 		characters: function(val, oldVal) {
       this.calculatePrice(val)
+      this.$emit('price', this.ones)
 		}
 	},
   methods: {

@@ -91,13 +91,36 @@ const apiFactory = app => ({
 		}
 	},
 
-	async checkDomain() {
+	async checkDomain(subdomain) {
 		const domain = domainnames[0]
-		const subdomain = 'givgivgiv'
 
 		var info = await registrarVersions[domain.version].query(domain, subdomain)
 
 		return info
+	},
+
+	async registerDomain(subdomain) {
+		const domain = domainnames[0]
+
+		var info = await registrarVersions[domain.version].query(domain, subdomain)
+
+		// const accounts = await harmony.getAccount()
+		const accounts = await ethereum.enable()
+
+		try {
+			var tx = await registrarVersions[domain.version].register(
+				domain,
+				subdomain,
+				accounts[0],
+				referrerAddress,
+				this.resolverAddress,
+				utils.toBN(info[1]).toString()
+			)
+
+			return tx
+		} catch (e) {
+			console.log('error', e)
+		}
 	}
 })
 

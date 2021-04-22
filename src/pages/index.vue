@@ -23,12 +23,33 @@
 						<form @submit.prevent="searchName">
 							<i class="fa fa-search icon"></i>
 							<input v-model="search" class="search" placeholder="Search for a ONE name" spellcheck="false" />
-							<button :disabled="search && search.length < 1" type="submit">Search</button>
+							<button :disabled="searchDisabled || (search && search.length < 1)" type="submit">{{ searchText }}</button>
 						</form>
 					</div>
+
 					<div class="priceContainer">
 						<div v-if="hostname" class="hostname">{{ hostname }}</div>
-						<price :characters="search.length" />
+						<price :characters="search.length" @price="priceChange" />
+					</div>
+
+					<div class="search_result_container">
+						<div v-if="searchDisabled" class="search_result">Searching...</div>
+
+						<div v-if="searchResult">
+							<div v-if="searchResult[0] == ''">
+								Sorry, {{ hostname }} is taken 😔 try another ONE!
+							</div>
+							<div v-else class="search_result">
+								<div><span class="green">Congratulations!</span> {{ hostname }} is available.</div>
+								<div class="register_container"><i class="fa fa-diamond"></i> <a href="" @click.prevent="registerDomain">Register for {{ price.toLocaleString() }} ONE</a> (1 Year)</div>
+							</div>
+						</div>
+						<div v-if="registering" class="search_result">Registering. Please wait...</div>
+						<div v-if="confirmation" class="confirmation_result">
+							<div>Registered!</div>
+							<div><span class="green">{{ safeHostname }}</span> is yours.</div>
+							<div class="confirmation"><a :href="`https://explorer.pops.one/#/tx/${confirmation.tx}`" target="_blank">Confirmation</a></div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -47,14 +68,22 @@ export default {
 		return {
 			loading: true,
 			connected: false,
+			searchDisabled: false,
 			search: '',
 			hostname: null,
-			connectButton: 'Connect'
+			safeHostname: null,
+			searchText: 'Search',
+			connectButton: 'Connect',
+			searchResult: null,
+			price: 0,
+			registering: false,
+			confirmation: null
 		}
 	},
 	watch: {
 		search: function(val, oldVal) {
       if (val) {
+				this.searchResult = null
 				this.validateHostname()
 			} else {
 				this.hostname = null
@@ -70,6 +99,9 @@ export default {
 			this.search = cleanHostname
 			this.hostname = `${cleanHostname}.crazy.one`
 		},
+		priceChange(val) {
+			this.price = val
+		},
 		async connect() {
 			const wallet = await this.$store.dispatch('subdomain/connect')
 			console.log(wallet)
@@ -83,16 +115,21 @@ export default {
 			await this.$subdomain.init()
 			this.loading = false
 		},
-		async checkDomain() {
-			const response = await this.$subdomain.checkDomain()
-			console.log(response)
-		},
-		searchName() {
-			console.log(this.search)
+		async searchName() {
+			this.searchText = 'Loading'
+			this.searchDisabled = true
+			this.searchResult = await this.$subdomain.checkDomain(this.search)
+			this.searchText = 'Search'
+			this.searchDisabled = false
 		},
 		async registerDomain() {
-			const response = await this.$subdomain.registerDomain(subdomain)
-			console.log(response)
+			this.safeHostname = this.hostname
+			this.registering = true
+			const response = await this.$subdomain.registerDomain(this.hostname)
+			this.search = ''
+			this.registering = false
+			this.searchResult = false
+			this.confirmation = response
 		}
 	}
 }
@@ -104,11 +141,16 @@ export default {
 	font-size: 20px;
 }
 
+.green {
+	color: #31ee84;
+}
+
 .container {
 	min-height: 100vh;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: top;
+	margin-top: 200px;
 	text-align: center;
 }
 
@@ -176,13 +218,48 @@ form {
 
 .priceContainer {
 	margin-top: 10px;
-	min-height: 100px;
+	min-height: 60px;
 	color: #fff;
-	font-size: 20px;
 	display: flex;
 
 	.hostname {
 		padding-right: 20px;
+	}
+}
+
+.search_result_container {
+	color: #fff;
+	font-size: 20px;
+	.search_result {
+		display: flex;
+
+		.register_container {
+			margin-left: 20px;
+
+			a {
+				color: #fff;
+
+				&:hover {
+					opacity: 0.7;
+				}
+			}
+		}
+	}
+
+	.confirmation_result {
+		display: flex;
+		div {
+			margin-right: 10px;
+
+			a {
+				color: #fff;
+				font-size: 16px;
+
+				&:hover {
+					opacity: 0.7;
+				}
+			}
+		}
 	}
 }
 </style>
