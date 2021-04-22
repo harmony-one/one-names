@@ -25,7 +25,7 @@ export default {
 	},
   methods: {
     calculatePrice(val) {
-			switch(parseInt(val)) {
+      switch(parseInt(val)) {
       case 0:
         this.ones = 0
         break;
