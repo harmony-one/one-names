@@ -1,24 +1,13 @@
 <template>
   <section class="section">
-		<div class="nav">
-			<ul>
-				<li>
-					<img src="https://assets.website-files.com/5ea98076e2f684f39f95888f/5ea98076e2f684fdc09588b9_harmony_logo.svg">
-				</li>
-				<li>
-					<a href="https://onenames.gitbook.io/onenames/" target="_blank">About</a>
-				</li>
-				<li>
-					<a href="https://onenames.gitbook.io/onenames/faq" target="_blank">FAQ</a>
-				</li>
-			</ul>
-		</div>
+		<topnav />
 
 		<div class="container">
 			<div class="inner_container">
 				<div class="logo"><img src="/images/onenameslogo.svg" ></div>
+				<div v-if="noWallet" class="loading">MetaMask wallet not installed 😔</div>
 				<div v-if="loading" class="loading">Loading...</div>
-				<div v-else>
+				<div v-if="!loading && !noWallet">
 					<div>
 						<form @submit.prevent="searchName">
 							<i class="fa fa-search icon"></i>
@@ -58,14 +47,17 @@
 </template>
 
 <script>
+import topnav from '~/components/topnav.vue'
 import price from '~/components/price.vue'
 
 export default {
 	components: {
-    price
+    topnav,
+		price
   },
 	data() {
 		return {
+			noWallet: false,
 			loading: true,
 			connected: false,
 			searchDisabled: false,
@@ -111,9 +103,14 @@ export default {
 			}
 		},
 		async init() {
-			this.loading = true
-			await this.$subdomain.init()
-			this.loading = false
+			if (window.ethereum) {
+				this.loading = true
+				await this.$subdomain.init()
+				this.loading = false
+			} else {
+				this.noWallet = true
+				this.loading = false
+			}
 		},
 		async searchName() {
 			this.searchText = 'Loading'
@@ -143,29 +140,6 @@ export default {
 
 .green {
 	color: #31ee84;
-}
-
-.nav {
-	position: relative;
-  top: 20px;
-  left: 20px;
-
-	ul {
-		display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    padding: 0px;
-    margin: 0px;
-		list-style-type: none;
-
-		li {
-			padding-right: 30px;
-		}
-	}
-	a, a:hover {
-		color: #fff;
-		text-decoration: none;
-	}
 }
 
 .container {
