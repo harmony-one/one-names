@@ -4,6 +4,7 @@ import { default as namehash } from 'eth-ens-namehash'
 import Web3 from 'web3'
 import { default as Promise } from 'bluebird'
 import { keccak_256 as sha3 } from 'js-sha3'
+import ENS, { getEnsAddress } from '@ensdomains/ensjs'
 const utils = require('web3-utils')
 
 import subdomainregistrar_artifacts from '../../build/contracts/EthRegistrarSubdomainRegistrar.json'
@@ -16,7 +17,7 @@ const defaultSubdomainRegistrar = '0x29770aC8cEEfad98C928c5A7142eDBc4c5f8A4a2'
 const domainnames = [{ name: 'crazy-test', version: '1.0' }]
 
 var SubdomainRegistrar = contract(subdomainregistrar_artifacts)
-var ENS = contract(ens_artifacts)
+var ENSC = contract(ens_artifacts)
 Promise.config({ cancellation: true })
 
 var registrarVersions = {
@@ -61,10 +62,10 @@ const apiFactory = app => ({
 	async init() {
 		let web3 = new Web3(window.ethereum)
 		SubdomainRegistrar.setProvider(web3.currentProvider)
-		ENS.setProvider(web3.currentProvider)
+		ENSC.setProvider(web3.currentProvider)
 
 		try {
-			this.ens = await ENS.at(ensAddress)
+			this.ens = await ENSC.at(ensAddress)
 
 			this.resolverAddress = await this.ens.resolver(
 				namehash.hash('resolver.one')
@@ -95,6 +96,11 @@ const apiFactory = app => ({
 		const domain = domainnames[0]
 
 		var info = await registrarVersions[domain.version].query(domain, subdomain)
+		const hostname = `${subdomain}.${domain.name}.one`
+
+		const ens = new ENS({ provider: web3.currentProvider, ensAddress })
+		const test = await ens.name('resolver.one').getOwner(hostname)
+		console.log(test)
 
 		return info
 	},

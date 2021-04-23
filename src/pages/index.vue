@@ -17,8 +17,8 @@
 					</div>
 
 					<div class="priceContainer">
-						<div v-if="hostname" class="hostname">{{ hostname }}</div>
-						<price :characters="search.length" @price="priceChange" />
+						<div v-if="hostname" class="hostname">{{ hostname }} <span v-if="invalid" class="red">🙅‍♀️ Invalid Hostname</span></div>
+						<price v-if="!invalid" :characters="encodedSearch.length" @price="priceChange" />
 					</div>
 
 					<div class="search_result_container">
@@ -47,6 +47,9 @@
 </template>
 
 <script>
+const isValidHostname = require('is-valid-hostname')
+const punycode = require('punycode')
+
 import topnav from '~/components/topnav.vue'
 import price from '~/components/price.vue'
 
@@ -62,6 +65,8 @@ export default {
 			connected: false,
 			searchDisabled: false,
 			search: '',
+			encodedSearch: '',
+			invalid: false,
 			hostname: null,
 			safeHostname: null,
 			searchText: 'Search',
@@ -74,7 +79,9 @@ export default {
 	},
 	watch: {
 		search: function(val, oldVal) {
+			this.encodedSearch = punycode.toASCII(val)
       if (val) {
+				this.invalid = false
 				this.searchResult = null
 				this.validateHostname()
 			} else {
@@ -87,9 +94,7 @@ export default {
 	},
 	methods: {
 		validateHostname() {
-			let cleanHostname = this.search.replace(/[^a-z0-9-_]/gmi, '')
-			this.search = cleanHostname
-			this.hostname = `${cleanHostname}.crazy.one`
+			this.hostname = `${this.search}.crazy.one`
 		},
 		priceChange(val) {
 			this.price = val
@@ -113,6 +118,11 @@ export default {
 			}
 		},
 		async searchName() {
+			if (!isValidHostname(this.encodedSearch)) {
+				this.invalid = true
+				return
+			}
+			this.confirmation = null
 			this.searchText = 'Loading'
 			this.searchDisabled = true
 			this.searchResult = await this.$subdomain.checkDomain(this.search)
@@ -122,7 +132,7 @@ export default {
 		async registerDomain() {
 			this.safeHostname = this.hostname
 			this.registering = true
-			const response = await this.$subdomain.registerDomain(this.hostname)
+			const response = await this.$subdomain.registerDomain(this.encodedSearch)
 			this.search = ''
 			this.registering = false
 			this.searchResult = false
@@ -140,6 +150,10 @@ export default {
 
 .green {
 	color: #31ee84;
+}
+
+.red {
+	color: red;
 }
 
 .container {
