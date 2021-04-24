@@ -6,7 +6,7 @@
 			<div class="inner_container">
 				<div class="logo"><img src="/images/onenameslogo.svg" ></div>
 				<div v-if="noWallet" class="loading">MetaMask wallet not installed 😔</div>
-				<div v-if="loading" class="loading">Loading...</div>
+				<div v-if="loading" class="loading"><PulseLoader /></div>
 				<div v-if="!loading && !noWallet">
 					<div>
 						<form @submit.prevent="searchName">
@@ -22,23 +22,23 @@
 					</div>
 
 					<div class="search_result_container">
-						<div v-if="searchDisabled" class="search_result">Searching...</div>
+						<div v-if="searchDisabled" class="search_result">Searching <PulseLoader size="8px" /></div>
 
 						<div v-if="searchResult">
 							<div v-if="searchResult[0] == ''">
 								Sorry, {{ hostname }} is taken 😔 try another ONE!
 							</div>
 							<div v-else class="search_result">
-								<div><span class="green">Congratulations!</span> {{ hostname }} is available.</div>
+								<div><span class="congrats">Congratulations!</span> <span class="green">{{ hostname }}</span> is available.</div>
 								<div class="register_container"><i class="fa fa-diamond"></i> <a href="" @click.prevent="registerDomain">Register for {{ price.toLocaleString() }} ONE</a> (1 Year)</div>
 							</div>
 						</div>
-						<div v-if="registering" class="search_result">Registering. Please wait...</div>
+						<div v-if="registering" class="search_result">Registering. Please wait <PulseLoader size="8px" /></div>
 						<div v-if="confirmation" class="confirmation_result">
 							<div>Registered!</div>
 							<div><span class="green">{{ safeHostname }}</span> is yours.</div>
-							<div class="confirmation"><a :href="`https://explorer.pops.one/#/tx/${confirmation.tx}`" target="_blank">Confirmation</a></div>
 						</div>
+						<div v-if="confirmation" class="confirmation"><a :href="`https://explorer.pops.one/#/tx/${confirmation.tx}`" target="_blank">Confirmation</a></div>
 					</div>
 				</div>
 			</div>
@@ -52,11 +52,13 @@ const punycode = require('punycode')
 
 import topnav from '~/components/topnav.vue'
 import price from '~/components/price.vue'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 export default {
 	components: {
     topnav,
-		price
+		price,
+		PulseLoader
   },
 	data() {
 		return {
@@ -83,6 +85,7 @@ export default {
       if (val) {
 				this.invalid = false
 				this.searchResult = null
+				this.confirmation = null
 				this.validateHostname()
 			} else {
 				this.hostname = null
@@ -143,13 +146,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$green: #31ee84;
+$red: red;
+
 .loading {
 	color: #fff;
 	font-size: 20px;
 }
 
 .green {
-	color: #31ee84;
+	color: $green;
 }
 
 .red {
@@ -232,6 +238,7 @@ form {
 	min-height: 60px;
 	color: #fff;
 	display: flex;
+	justify-content: center;
 
 	.hostname {
 		padding-right: 20px;
@@ -243,12 +250,15 @@ form {
 	font-size: 20px;
 	.search_result {
 		display: flex;
+		flex-direction: column;
+		justify-content: center;
 
 		.register_container {
-			margin-left: 20px;
+			margin-top: 20px;
+			color: $green;
 
 			a {
-				color: #fff;
+				color: $green;
 
 				&:hover {
 					opacity: 0.7;
@@ -257,8 +267,13 @@ form {
 		}
 	}
 
+	.congrats {
+		font-weight: bold;
+	}
+
 	.confirmation_result {
 		display: flex;
+		justify-content: center;
 		div {
 			margin-right: 10px;
 
@@ -269,6 +284,17 @@ form {
 				&:hover {
 					opacity: 0.7;
 				}
+			}
+		}
+	}
+
+	.confirmation {
+		a {
+			color: #fff;
+			font-size: 16px;
+
+			&:hover {
+				opacity: 0.7;
 			}
 		}
 	}

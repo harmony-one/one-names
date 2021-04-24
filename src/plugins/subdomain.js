@@ -99,8 +99,8 @@ const apiFactory = app => ({
 		const hostname = `${subdomain}.${domain.name}.one`
 
 		const ens = new ENS({ provider: web3.currentProvider, ensAddress })
-		const test = await ens.name('resolver.one').getOwner(hostname)
-		console.log(test)
+		const test = await ens.name(hostname).getAddress()
+		console.log(hostname, test)
 
 		return info
 	},
