@@ -29,8 +29,8 @@
 								Sorry, {{ hostname }} is taken 😔 try another ONE!
 							</div>
 							<div v-else class="search_result">
-								<div><span class="congrats">Congratulations!</span> <span class="green">{{ hostname }}</span> is available.</div>
-								<div class="register_container"><i class="fa fa-diamond"></i> <a href="" @click.prevent="registerDomain">Register for {{ price.toLocaleString() }} ONE</a> (1 Year)</div>
+								<div><span class="green">{{ hostname }}</span> is available.</div>
+								<div class="register_container"><a href="" @click.prevent="registerDomain">Register</a></div>
 							</div>
 						</div>
 						<div v-if="registering" class="search_result">Registering. Please wait <PulseLoader size="8px" /></div>
@@ -146,7 +146,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$green: #31ee84;
+$green: #51ff9e;
 $red: red;
 
 .loading {

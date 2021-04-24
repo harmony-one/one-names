@@ -1,6 +1,6 @@
 <template>
   <div v-if="characters">
-    <span class="price">{{ ones.toLocaleString() }} ONE</span>
+    <span class="price">{{ ones.toLocaleString() }} ONE (1 Year)</span>
   </div>
 </template>
 
