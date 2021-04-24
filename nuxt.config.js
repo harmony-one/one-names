@@ -15,6 +15,7 @@ module.exports = {
 			{ hid: 'description', name: 'description', content: 'OneNames.' }
 		],
 		link: [
+			{ rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
 			{
 				rel: 'stylesheet',
 				href:
