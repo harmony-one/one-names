@@ -30,7 +30,7 @@
 							</div>
 							<div v-else class="search_result">
 								<div><span class="green">{{ hostname }}</span> is available.</div>
-								<div class="register_container"><a href="" @click.prevent="registerDomain">Register</a></div>
+								<div v-if="!registering" class="register_container"><button @click.prevent="getTwitter">Register</button></div>
 							</div>
 						</div>
 						<div v-if="registering" class="search_result">Registering. Please wait <PulseLoader size="8px" /></div>
@@ -42,6 +42,17 @@
 					</div>
 				</div>
 			</div>
+			<modal name="twitter-modal" :clickToClose="false" :focusTrap="true">
+        <div class="twitter_modal">
+					<div>Do you want to link this registration to your Twitter profile?</div>
+					<i class="fa fa-twitter icon"></i>
+					<input v-model="twitter" type="text" placeholder="Twitter username" />
+					<div class="button_container">
+						<button @click="registerDomain(true)"><i class="fa fa-check"></i> Yes, link it</button>
+						<button @click="registerDomain(false)">No, thank you</button>
+					</div>
+				</div>
+    	</modal>
 		</div>
   </section>
 </template>
@@ -50,9 +61,12 @@
 const isValidHostname = require('is-valid-hostname')
 const punycode = require('punycode')
 
+import Vue from 'vue'
 import topnav from '~/components/topnav.vue'
 import price from '~/components/price.vue'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import VModal from 'vue-js-modal'
+Vue.use(VModal)
 
 export default {
 	components: {
@@ -76,7 +90,8 @@ export default {
 			searchResult: null,
 			price: 0,
 			registering: false,
-			confirmation: null
+			confirmation: null,
+			twitter: null
 		}
 	},
 	watch: {
@@ -89,6 +104,11 @@ export default {
 				this.validateHostname()
 			} else {
 				this.hostname = null
+			}
+		},
+		twitter: function(val, oldVal) {
+			if (val) {
+				this.twitter = val.replace('@', '')
 			}
 		}
 	},
@@ -132,9 +152,23 @@ export default {
 			this.searchText = 'Search'
 			this.searchDisabled = false
 		},
-		async registerDomain() {
+		getTwitter() {
+			this.$modal.show('twitter-modal')
+		},
+		async registerDomain(useTwitter) {
+			if (useTwitter) {
+				if (!this.twitter) {
+					console.log('Twitter handle is empty')
+					return
+				}
+			}
+
+			this.$modal.hide('twitter-modal')
+
 			this.safeHostname = this.hostname
 			this.registering = true
+
+			// TODO pass this.twitter to register method
 			const response = await this.$subdomain.registerDomain(this.encodedSearch)
 			this.search = ''
 			this.registering = false
@@ -162,8 +196,11 @@ $red: red;
 	color: red;
 }
 
+button {
+	cursor: pointer;
+}
+
 .container {
-	min-height: 100vh;
 	display: flex;
 	justify-content: center;
 	align-items: top;
@@ -218,6 +255,10 @@ form {
 		&:disabled {
 			background: rgb(199, 211, 227);
 		}
+
+		&:hover {
+			opacity: 0.8;
+		}
 	}
 }
 
@@ -256,12 +297,23 @@ form {
 		.register_container {
 			margin-top: 20px;
 			color: $green;
+			display: flex;
+			justify-content: center;
 
-			a {
-				color: $green;
+			button {
+				border-radius: 6px;
+				display: block;
+				background: rgb(51, 182, 255);
+				color: white;
+				font-size: 18px;
+				font-family: Overpass;
+				padding: 6px 0px;
+				height: 40px;
+				width: 162px;
+				border: none;
 
 				&:hover {
-					opacity: 0.7;
+					opacity: 0.8;
 				}
 			}
 		}
@@ -295,6 +347,67 @@ form {
 
 			&:hover {
 				opacity: 0.7;
+			}
+		}
+	}
+}
+
+.twitter_modal {
+	background-color: #dbf2ff;
+	height: 100vh;
+	padding: 20px;
+
+	::placeholder {
+		color: #ccc;
+	}
+
+	.icon {
+		padding: 10px;
+		min-width: 40px;
+		margin-top: 50px;
+		position: absolute;
+		font-size: 30px;
+		color: #1da1f8;
+		margin-left: 0 !important;
+	}
+
+	input {
+		margin-top: 50px;
+		border-radius: 6px !important;
+		font-size: 18px !important;
+		padding: 10px 0px 10px 55px;
+		width: 50%;
+		border: none;
+		border-radius: 0px;
+		font-size: 18px;
+		font-family: Overpass;
+		font-weight: 100;
+	}
+
+	.button_container {
+		display: flex;
+		justify-content: center;
+		margin-top: 10px;
+
+		:last-child {
+			margin-left: 10px;
+			opacity: 0.7;
+		}
+
+		button {
+			border-radius: 6px;
+			display: block;
+			background: rgb(51, 182, 255);
+			color: white;
+			font-size: 18px;
+			font-family: Overpass;
+			padding: 6px 0px;
+			height: 40px;
+			width: 162px;
+			border: none;
+
+			&:hover {
+				opacity: 0.6;
 			}
 		}
 	}
