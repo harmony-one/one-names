@@ -1,4 +1,4 @@
-// require('dotenv').config()
+require('dotenv').config()
 const webpack = require('webpack')
 
 module.exports = {
@@ -49,7 +49,13 @@ module.exports = {
 	/*
 	 ** Nuxt.js modules
 	 */
-	modules: [],
+	modules: [
+		'@nuxtjs/axios'
+	],
+
+	serverMiddleware: [
+		{ path: '/api', handler: '~/server-middleware/api.js' }
+	],
 
 	/*
 	 ** Build configuration

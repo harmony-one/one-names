@@ -174,6 +174,10 @@ export default {
 			this.registering = false
 			this.searchResult = false
 			this.confirmation = response
+		},
+		async setDns() {
+			const response = await this.$axios.$get('/api/dns')
+			console.log(response)
 		}
 	}
 }

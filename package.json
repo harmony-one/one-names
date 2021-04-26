@@ -23,6 +23,8 @@
     "@harmony-js/contract": "^0.1.56",
     "@harmony-js/core": "^0.1.57",
     "@harmony-js/utils": "^0.1.56",
+    "@nuxtjs/axios": "^5.13.1",
+    "@nuxtjs/dotenv": "^1.4.1",
     "@truffle/hdwallet-provider": "^1.2.6",
     "bluebird": "^3.7.2",
     "dotenv": "^8.2.0",
