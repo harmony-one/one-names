@@ -2,7 +2,7 @@ require('dotenv').config()
 const webpack = require('webpack')
 
 module.exports = {
-	mode: 'spa',
+	ssr: false,
 
 	/*
 	 ** Headers of the page

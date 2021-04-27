@@ -1,7 +1,6 @@
 <template>
   <section class="section">
-		<topnav />
-
+		<topnav :account="account" :noWallet="noWallet" :loading="loading" />
 		<div class="container">
 			<div class="inner_container">
 				<div class="logo"><img src="/images/onenameslogo.svg" ></div>
@@ -17,7 +16,7 @@
 					</div>
 
 					<div class="priceContainer">
-						<div v-if="hostname" class="hostname">{{ hostname }} <span v-if="invalid" class="red">🙅‍♀️ Invalid Hostname</span></div>
+						<div v-if="hostname" class="hostname">{{ hostname }} <span v-if="invalid" class="red">Invalid Hostname</span></div>
 						<price v-if="!invalid" :characters="encodedSearch.length" @price="priceChange" />
 					</div>
 
@@ -25,12 +24,15 @@
 						<div v-if="searchDisabled" class="search_result">Searching <PulseLoader size="8px" /></div>
 
 						<div v-if="searchResult">
-							<div v-if="searchResult[0] == ''">
-								Sorry, {{ hostname }} is taken 😔 try another ONE!
+							<div v-if="Number(searchResult.subdomainAddress) !== 0">
+								Sorry, <span class="green">{{ hostname }}</span> is taken.
 							</div>
 							<div v-else class="search_result">
 								<div><span class="green">{{ hostname }}</span> is available.</div>
-								<div v-if="!registering" class="register_container"><button @click.prevent="getTwitter">Register</button></div>
+								<div v-if="account" class="register_container">
+									<button v-if="!registering" @click.prevent="getTwitter">Register for {{ priceFormat(searchResult.price) }} ONE</button>
+								</div>
+								<div v-else class="register_container"><button @click="connect()">Connect</button></div>
 							</div>
 						</div>
 						<div v-if="registering" class="search_result">Registering. Please wait <PulseLoader size="8px" /></div>
@@ -38,7 +40,7 @@
 							<div>Registered!</div>
 							<div><span class="green">{{ safeHostname }}</span> is yours.</div>
 						</div>
-						<div v-if="confirmation" class="confirmation"><a :href="`https://explorer.pops.one/#/tx/${confirmation.tx}`" target="_blank">Confirmation</a></div>
+						<div v-if="confirmation" class="confirmation"><a :href="`https://explorer.pops.one/#/tx/${confirmation.transactionHash}`" target="_blank">Confirmation</a></div>
 					</div>
 				</div>
 			</div>
@@ -48,8 +50,8 @@
 					<i class="fa fa-twitter icon"></i>
 					<input v-model="twitter" type="text" placeholder="Twitter username" />
 					<div class="button_container">
-						<button @click="registerDomain(true)"><i class="fa fa-check"></i> Yes, link it</button>
-						<button @click="registerDomain(false)">No, thank you</button>
+						<button @click="register(true)"><i class="fa fa-check"></i> Yes, link it</button>
+						<button @click="register(false)">No, thank you</button>
 					</div>
 				</div>
     	</modal>
@@ -76,6 +78,7 @@ export default {
   },
 	data() {
 		return {
+			account: null,
 			noWallet: false,
 			loading: true,
 			connected: false,
@@ -116,25 +119,31 @@ export default {
 		this.init()
 	},
 	methods: {
+		priceFormat(price) {
+			return Math.round(Number(price) / 1e18).toLocaleString()
+		},
+		async connect() {
+			const accounts = await this.$subdomain.connect()
+
+			if (accounts && accounts.length) {
+				this.account = accounts[0]
+			}
+		},
 		validateHostname() {
 			this.hostname = `${this.search}.crazy.one`
 		},
 		priceChange(val) {
 			this.price = val
 		},
-		async connect() {
-			const wallet = await this.$store.dispatch('subdomain/connect')
-			console.log(wallet)
-			if (wallet) {
-				this.connected = true
-				this.connectButton = wallet
-			}
-		},
 		async init() {
 			if (window.ethereum) {
 				this.loading = true
-				await this.$subdomain.init()
+				const accounts = await this.$subdomain.init()
 				this.loading = false
+
+				if (accounts && accounts.length) {
+					this.account = accounts[0]
+				}
 			} else {
 				this.noWallet = true
 				this.loading = false
@@ -155,7 +164,7 @@ export default {
 		getTwitter() {
 			this.$modal.show('twitter-modal')
 		},
-		async registerDomain(useTwitter) {
+		async register(useTwitter) {
 			if (useTwitter) {
 				if (!this.twitter) {
 					console.log('Twitter handle is empty')
@@ -169,7 +178,7 @@ export default {
 			this.registering = true
 
 			// TODO pass this.twitter to register method
-			const response = await this.$subdomain.registerDomain(this.encodedSearch)
+			const response = await this.$subdomain.register(this.encodedSearch)
 			this.search = ''
 			this.registering = false
 			this.searchResult = false
@@ -208,7 +217,7 @@ button {
 	display: flex;
 	justify-content: center;
 	align-items: top;
-	margin-top: 200px;
+	margin-top: 85px;
 	text-align: center;
 }
 
@@ -311,9 +320,9 @@ form {
 				color: white;
 				font-size: 18px;
 				font-family: Overpass;
-				padding: 6px 0px;
+				padding: 6px 20px;
 				height: 40px;
-				width: 162px;
+				width: auto;
 				border: none;
 
 				&:hover {

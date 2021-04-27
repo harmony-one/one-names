@@ -14,7 +14,7 @@ export default {
   },
   data() {
 		return {
-			ones: 0
+			ones: 1
 		}
 	},
   watch: {
@@ -27,7 +27,7 @@ export default {
     calculatePrice(val) {
       switch(parseInt(val)) {
       case 0:
-        this.ones = 0
+        this.ones = 1
         break;
       case 1:
         this.ones = 1000000000

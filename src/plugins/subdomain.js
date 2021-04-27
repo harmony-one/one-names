@@ -1,133 +1,86 @@
-import userStore from './userStore'
-import { default as contract } from 'truffle-contract'
-import { default as namehash } from 'eth-ens-namehash'
-import Web3 from 'web3'
-import { default as Promise } from 'bluebird'
-import { keccak_256 as sha3 } from 'js-sha3'
-import ENS, { getEnsAddress } from '@ensdomains/ensjs'
+const ENS = require('@ensdomains/ensjs').default
+const Web3 = require('web3')
+const sha3 = require('web3-utils').sha3
 const utils = require('web3-utils')
+const BN = require('bn.js')
 
-import subdomainregistrar_artifacts from '../../build/contracts/EthRegistrarSubdomainRegistrar.json'
-import ens_artifacts from '../../build/contracts/ENSRegistryWithFallback.json'
+const ENS_ADDRESS = '0x84e2459Bf48ed4B57014F5E6c6a76B845d44F278'
+const REFERRER_ADDRESS = '0xFbE0741bC1B52dD723A6bfA145E0a15803AC9581'
+const NODE_URL = 'https://api.s0.b.hmny.io'
 
-const ensAddress = '0x8658177435d4e2f9cE0E651115995757E6b542e6'
-const referrerAddress = '0xFbE0741bC1B52dD723A6bfA145E0a15803AC9581'
-const defaultSubdomainRegistrar = '0x29770aC8cEEfad98C928c5A7142eDBc4c5f8A4a2'
+const DOMAIN_NAME = 'crazy'
 
-const domainnames = [{ name: 'crazy-test', version: '1.0' }]
+const ETH_GAS_LIMIT = 6721900
 
-var SubdomainRegistrar = contract(subdomainregistrar_artifacts)
-var ENSC = contract(ens_artifacts)
-Promise.config({ cancellation: true })
+const duration = 31536000
 
-var registrarVersions = {
-	'1.0': {
-		query: async function(domain, subdomain) {
-			console.log(111, domain, subdomain)
-			const res = await domain.contract.query(
-				'0x' + sha3(domain.name),
-				subdomain
-			)
-
-			console.log(222, res)
-			return res
-		},
-		register: async function(
-			domain,
-			subdomain,
-			ownerAddress,
-			referrerAddress,
-			resolverAddress,
-			value
-		) {
-			return domain.contract.register(
-				'0x' + sha3(domain.name),
-				subdomain,
-				ownerAddress || referrerAddress,
-				referrerAddress,
-				resolverAddress,
-				{
-					from: ownerAddress || referrerAddress,
-					value: Number(value)
-				}
-			)
-		}
-	}
-}
-
+const EthRegistrarSubdomainRegistrar = require("../../build/contracts/EthRegistrarSubdomainRegistrar");
 const apiFactory = app => ({
-	wallet: null,
-	resolverAddress: null,
-	ens: null,
-	async init() {
-		let web3 = new Web3(window.ethereum)
-		SubdomainRegistrar.setProvider(web3.currentProvider)
-		ENSC.setProvider(web3.currentProvider)
+  ens: null,
+  web3: null,
+  subdomainRegistrar: null,
+  resolverAddress: null,
+  price: 1,
+  async init() {
+    this.web3 = new Web3(window.ethereum)
 
-		try {
-			this.ens = await ENSC.at(ensAddress)
+    const accounts = await this.web3.eth.getAccounts()
 
-			this.resolverAddress = await this.ens.resolver(
-				namehash.hash('resolver.one')
-			)
+    const provider = new Web3.providers.HttpProvider(NODE_URL)
 
-			// Construct instances of the registrars we know about
-			var registrars = {}
-			for (var i = 0; i < domainnames.length; i++) {
-				var domain = domainnames[i]
-				if (registrars[domain.registrar] === undefined) {
-					registrars[domain.registrar] = await (domain.registrar === undefined
-						? SubdomainRegistrar.at(defaultSubdomainRegistrar)
-						: SubdomainRegistrar.at(domain.registrar))
-				}
-				domainnames[i].contract = registrars[domain.registrar]
-			}
+    this.ens = new ENS({ provider, ensAddress: ENS_ADDRESS })
 
-			// Get the address of the current public resolver
-			this.resolverAddress = await this.ens.resolver(
-				namehash.hash('resolver.one')
-			)
-		} catch (e) {
-			console.log('error', e)
-		}
+    this.resolverAddress = await this.ens.name('resolver.one').getAddress()
+
+    const subdomainRegisterAddress = await this.ens.name('crazy.one').getAddress()
+
+    this.subdomainRegistrar = new this.web3.eth.Contract(
+      EthRegistrarSubdomainRegistrar.abi,
+      subdomainRegisterAddress
+    )
+
+    return accounts
+  },
+
+  async checkDomain(subdomain) {
+    let subdomainAddress = await this.ens.name(`${subdomain}.crazy.one`).getAddress()
+
+    this.price = await this.subdomainRegistrar.methods.rentPrice(subdomain, duration).call()
+
+    return { subdomainAddress, price: this.price }
+  },
+
+  async connect() {
+		const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+		return accounts
 	},
 
-	async checkDomain(subdomain) {
-		const domain = domainnames[0]
+  async register(subdomain) {
 
-		var info = await registrarVersions[domain.version].query(domain, subdomain)
-		const hostname = `${subdomain}.${domain.name}.one`
+    const accounts = await ethereum.enable()
 
-		const ens = new ENS({ provider: web3.currentProvider, ensAddress })
-		const test = await ens.name(hostname).getAddress()
-		console.log(hostname, test)
+    try {
+      const tx = await this.subdomainRegistrar.methods
+      .register(
+        sha3(DOMAIN_NAME),
+        subdomain,
+        accounts[0],
+        duration,
+        REFERRER_ADDRESS,
+        this.resolverAddress
+      )
+      .send({
+        from: accounts[0],
+        value: utils.toBN(this.price),
+        gas: ETH_GAS_LIMIT,
+        gasPrice: new BN(await this.web3.eth.getGasPrice()).mul(new BN(1)),
+      })
 
-		return info
-	},
-
-	async registerDomain(subdomain) {
-		const domain = domainnames[0]
-
-		var info = await registrarVersions[domain.version].query(domain, subdomain)
-
-		// const accounts = await harmony.getAccount()
-		const accounts = await ethereum.enable()
-
-		try {
-			var tx = await registrarVersions[domain.version].register(
-				domain,
-				subdomain,
-				accounts[0],
-				referrerAddress,
-				this.resolverAddress,
-				utils.toBN(info[1]).toString()
-			)
-
-			return tx
-		} catch (e) {
+      return tx
+    } catch (e) {
 			console.log('error', e)
 		}
-	}
+  }
 })
 
 export default ({ app }, inject) => {

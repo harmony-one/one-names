@@ -1,24 +1,62 @@
 <template>
   <div class="nav">
-    <ul>
-      <li>
-        <img src="https://assets.website-files.com/5ea98076e2f684f39f95888f/5ea98076e2f684fdc09588b9_harmony_logo.svg">
-      </li>
-      <li>
-        <a href="https://onenames.gitbook.io/onenames/" target="_blank">About</a>
-      </li>
-      <li>
-        <a href="https://onenames.gitbook.io/onenames/faq" target="_blank">FAQ</a>
-      </li>
-    </ul>
+    <div>
+      <ul>
+        <li>
+          <img src="https://assets.website-files.com/5ea98076e2f684f39f95888f/5ea98076e2f684fdc09588b9_harmony_logo.svg">
+        </li>
+        <li>
+          <a href="https://onenames.gitbook.io/onenames/" target="_blank">About</a>
+        </li>
+        <li>
+          <a href="https://onenames.gitbook.io/onenames/faq" target="_blank">FAQ</a>
+        </li>
+      </ul>
+    </div>
+    <div v-if="!loading && !noWallet">
+      <div v-if="account" class="account">
+        Connected <span>{{ account.substring(0, 20) }}...</span>
+      </div>
+      <div v-else>
+        <button @click="$subdomain.connect()">Connect</button>
+      </div>
+    </div>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    account: {
+      type: String,
+      default: null
+    },
+    noWallet: {
+      type: Boolean,
+      default: true
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    }
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 .nav {
 	position: relative;
-  top: 20px;
-  left: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+
+  .account {
+    color: #fff;
+
+    span {
+      font-family: monospace;
+    }
+  }
 
 	ul {
 		display: flex;
@@ -36,5 +74,23 @@
 		color: #fff;
 		text-decoration: none;
 	}
+
+  button {
+    border-radius: 6px;
+    display: block;
+    color: white;
+    font-size: 16px;
+    font-family: Overpass;
+    padding: 2px 0px;
+    height: 30px;
+    width: 162px;
+    border: 1px solid #fff;
+    background-color: transparent;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.6;
+    }
+  }
 }
 </style>
