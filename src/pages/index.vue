@@ -204,15 +204,11 @@ export default {
       this.registering = true
 
       // TODO pass this.twitter to register method
-      const response = await this.$subdomain.register(this.encodedSearch)
+      const response = await this.$subdomain.register(this.encodedSearch, this.twitter)
       this.search = ''
       this.registering = false
       this.searchResult = false
       this.confirmation = response
-    },
-    async setDns () {
-      const response = await this.$axios.$get('/api/dns')
-      console.log(response)
     }
   }
 }

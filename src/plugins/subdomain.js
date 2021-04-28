@@ -3,9 +3,9 @@ const Web3 = require('web3')
 const sha3 = require('web3-utils').sha3
 const utils = require('web3-utils')
 const BN = require('bn.js')
+const { hash } = require('eth-ens-namehash')
 
-const ENS_ADDRESS = '0x84e2459Bf48ed4B57014F5E6c6a76B845d44F278'
-const REFERRER_ADDRESS = '0xFbE0741bC1B52dD723A6bfA145E0a15803AC9581'
+const ENS_ADDRESS = '0xB750e4B49cf1b5162F7EfC964B3df5E9bfC893AD'
 const NODE_URL = 'https://api.s0.b.hmny.io'
 
 const DOMAIN_NAME = 'crazy'
@@ -58,7 +58,7 @@ const apiFactory = app => ({
     return years * 31536000
   },
 
-  async register (subdomain) {
+  async register (subdomain, twitterUsername) {
     const accounts = await window.ethereum.enable()
 
     try {
@@ -68,7 +68,7 @@ const apiFactory = app => ({
           subdomain,
           accounts[0],
           this.durationCalculator(subdomain),
-          REFERRER_ADDRESS,
+          twitterUsername,
           this.resolverAddress
         )
         .send({
@@ -78,10 +78,21 @@ const apiFactory = app => ({
           gasPrice: new BN(await this.web3.eth.getGasPrice()).mul(new BN(1))
         })
 
+      // TODO update DNS here
+
       return tx
     } catch (e) {
       console.log('error', e)
     }
+  },
+
+  async metadataLookup (subdomain) {
+    console.log(
+      'Twitter:',
+      await this.subdomainRegistrar.methods
+        .twitter(hash(`${subdomain}.crazy.one`))
+        .call()
+    )
   }
 })
 
