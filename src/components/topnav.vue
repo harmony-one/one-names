@@ -18,7 +18,9 @@
         Connected <span>{{ account.substring(0, 20) }}...</span>
       </div>
       <div v-else>
-        <button @click="$subdomain.connect()">Connect</button>
+        <button @click="$subdomain.connect()">
+          Connect
+        </button>
       </div>
     </div>
   </div>
@@ -45,7 +47,7 @@ export default {
 
 <style lang="scss" scoped>
 .nav {
-	position: relative;
+  position: relative;
   padding: 20px;
   display: flex;
   justify-content: space-between;
@@ -58,22 +60,22 @@ export default {
     }
   }
 
-	ul {
-		display: flex;
+  ul {
+    display: flex;
     -webkit-box-align: center;
     align-items: center;
     padding: 0px;
     margin: 0px;
-		list-style-type: none;
+    list-style-type: none;
 
-		li {
-			padding-right: 30px;
-		}
-	}
-	a, a:hover {
-		color: #fff;
-		text-decoration: none;
-	}
+    li {
+      padding-right: 30px;
+    }
+  }
+  a, a:hover {
+    color: #fff;
+    text-decoration: none;
+  }
 
   button {
     border-radius: 6px;
