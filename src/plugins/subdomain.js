@@ -14,14 +14,14 @@ const ETH_GAS_LIMIT = 6721900
 
 const duration = 31536000
 
-const EthRegistrarSubdomainRegistrar = require("../../build/contracts/EthRegistrarSubdomainRegistrar");
+const EthRegistrarSubdomainRegistrar = require('../../build/contracts/EthRegistrarSubdomainRegistrar')
 const apiFactory = app => ({
   ens: null,
   web3: null,
   subdomainRegistrar: null,
   resolverAddress: null,
   price: 1,
-  async init() {
+  async init () {
     this.web3 = new Web3(window.ethereum)
 
     const accounts = await this.web3.eth.getAccounts()
@@ -42,48 +42,47 @@ const apiFactory = app => ({
     return accounts
   },
 
-  async checkDomain(subdomain) {
-    let subdomainAddress = await this.ens.name(`${subdomain}.crazy.one`).getAddress()
+  async checkDomain (subdomain) {
+    const subdomainAddress = await this.ens.name(`${subdomain}.crazy.one`).getAddress()
 
     this.price = await this.subdomainRegistrar.methods.rentPrice(subdomain, duration).call()
 
     return { subdomainAddress, price: this.price }
   },
 
-  async connect() {
-		const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-		return accounts
-	},
+  async connect () {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    return accounts
+  },
 
-  async register(subdomain) {
-
-    const accounts = await ethereum.enable()
+  async register (subdomain) {
+    const accounts = await window.ethereum.enable()
 
     try {
       const tx = await this.subdomainRegistrar.methods
-      .register(
-        sha3(DOMAIN_NAME),
-        subdomain,
-        accounts[0],
-        duration,
-        REFERRER_ADDRESS,
-        this.resolverAddress
-      )
-      .send({
-        from: accounts[0],
-        value: utils.toBN(this.price),
-        gas: ETH_GAS_LIMIT,
-        gasPrice: new BN(await this.web3.eth.getGasPrice()).mul(new BN(1)),
-      })
+        .register(
+          sha3(DOMAIN_NAME),
+          subdomain,
+          accounts[0],
+          duration,
+          REFERRER_ADDRESS,
+          this.resolverAddress
+        )
+        .send({
+          from: accounts[0],
+          value: utils.toBN(this.price),
+          gas: ETH_GAS_LIMIT,
+          gasPrice: new BN(await this.web3.eth.getGasPrice()).mul(new BN(1))
+        })
 
       return tx
     } catch (e) {
-			console.log('error', e)
-		}
+      console.log('error', e)
+    }
   }
 })
 
 export default ({ app }, inject) => {
-	const subdomain = apiFactory(app)
-	inject('subdomain', subdomain)
+  const subdomain = apiFactory(app)
+  inject('subdomain', subdomain)
 }
