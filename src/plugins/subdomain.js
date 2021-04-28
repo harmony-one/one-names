@@ -12,8 +12,6 @@ const DOMAIN_NAME = 'crazy'
 
 const ETH_GAS_LIMIT = 6721900
 
-const duration = 31536000
-
 const EthRegistrarSubdomainRegistrar = require('../../build/contracts/EthRegistrarSubdomainRegistrar')
 const apiFactory = app => ({
   ens: null,
@@ -45,7 +43,7 @@ const apiFactory = app => ({
   async checkDomain (subdomain) {
     const subdomainAddress = await this.ens.name(`${subdomain}.crazy.one`).getAddress()
 
-    this.price = await this.subdomainRegistrar.methods.rentPrice(subdomain, duration).call()
+    this.price = await this.subdomainRegistrar.methods.rentPrice(subdomain, this.durationCalculator(subdomain)).call()
 
     return { subdomainAddress, price: this.price }
   },
@@ -53,6 +51,11 @@ const apiFactory = app => ({
   async connect () {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     return accounts
+  },
+
+  durationCalculator (subdomain) {
+    const years = app.$utils.priceCalculator(subdomain.length).years
+    return years * 31536000
   },
 
   async register (subdomain) {
@@ -64,7 +67,7 @@ const apiFactory = app => ({
           sha3(DOMAIN_NAME),
           subdomain,
           accounts[0],
-          duration,
+          this.durationCalculator(subdomain),
           REFERRER_ADDRESS,
           this.resolverAddress
         )

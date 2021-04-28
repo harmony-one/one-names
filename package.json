@@ -21,6 +21,7 @@
     "dotenv": "^8.2.0",
     "is-valid-hostname": "^1.0.0",
     "nuxt": "^2.12.0",
+    "pluralize": "^8.0.0",
     "punycode": "^2.1.1",
     "solium": "^1.2.5",
     "vue-js-modal": "^2.0.0-rc.6",
