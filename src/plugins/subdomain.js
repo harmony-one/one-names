@@ -77,7 +77,7 @@ const apiFactory = (app, $axios) => ({
         })
 
       // Update DNS here
-      await this.updateDns(tx.transactionHash)
+      // await this.updateDns(tx.transactionHash)
 
       return tx
     } catch (e) {

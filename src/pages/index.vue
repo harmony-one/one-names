@@ -183,7 +183,7 @@ export default {
       this.confirmation = null
       this.searchText = 'Loading'
       this.searchDisabled = true
-      this.searchResult = await this.$subdomain.checkDomain(this.search)
+      this.searchResult = await this.$subdomain.checkDomain(this.encodedSearch)
       this.searchText = 'Search'
       this.searchDisabled = false
     },
