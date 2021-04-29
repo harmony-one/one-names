@@ -70,7 +70,7 @@
         <div class="twitter_modal">
           <div>Do you want to link this registration to your Twitter profile?</div>
           <i class="fa fa-twitter icon" />
-          <input v-model="twitter" type="text" placeholder="Twitter username">
+          <input v-model="twitter" type="text" placeholder="Twitter username" spellcheck="false">
           <div class="button_container">
             <button @click="register(true)">
               <i class="fa fa-check" /> Yes, link it
@@ -203,7 +203,6 @@ export default {
       this.safeHostname = this.hostname
       this.registering = true
 
-      // TODO pass this.twitter to register method
       const response = await this.$subdomain.register(this.encodedSearch, this.twitter)
       this.search = ''
       this.registering = false

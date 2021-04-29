@@ -7,13 +7,11 @@ const { hash } = require('eth-ens-namehash')
 
 const ENS_ADDRESS = '0xB750e4B49cf1b5162F7EfC964B3df5E9bfC893AD'
 const NODE_URL = 'https://api.s0.b.hmny.io'
-
 const DOMAIN_NAME = 'crazy'
-
 const ETH_GAS_LIMIT = 6721900
 
 const EthRegistrarSubdomainRegistrar = require('../../build/contracts/EthRegistrarSubdomainRegistrar')
-const apiFactory = app => ({
+const apiFactory = (app, $axios) => ({
   ens: null,
   web3: null,
   subdomainRegistrar: null,
@@ -78,7 +76,8 @@ const apiFactory = app => ({
           gasPrice: new BN(await this.web3.eth.getGasPrice()).mul(new BN(1))
         })
 
-      // TODO update DNS here
+      // Update DNS here
+      await this.updateDns(tx.transactionHash)
 
       return tx
     } catch (e) {
@@ -86,17 +85,21 @@ const apiFactory = app => ({
     }
   },
 
-  async metadataLookup (subdomain) {
+  async twitterLookup (subdomain) {
     console.log(
       'Twitter:',
       await this.subdomainRegistrar.methods
         .twitter(hash(`${subdomain}.crazy.one`))
         .call()
     )
+  },
+
+  async updateDns (tx) {
+    await $axios.$post('/api/dns', { tx })
   }
 })
 
-export default ({ app }, inject) => {
-  const subdomain = apiFactory(app)
+export default ({ app, $axios }, inject) => {
+  const subdomain = apiFactory(app, $axios)
   inject('subdomain', subdomain)
 }
