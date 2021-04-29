@@ -1,6 +1,6 @@
 <template>
   <div v-if="characters">
-    <span class="price">{{ ones.ones.toLocaleString() }} ONE ({{ ones.years }} {{ 'Year' | pluralize(ones.years) }})</span>
+    <span class="price">{{ ones.toLocaleString() }} ONE (1 Year)</span>
   </div>
 </template>
 
@@ -14,7 +14,7 @@ export default {
   },
   data () {
     return {
-      ones: { ones: 1, years: 1 }
+      ones: 1
     }
   },
   watch: {

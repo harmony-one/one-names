@@ -52,7 +52,7 @@ const apiFactory = (app, $axios) => ({
   },
 
   durationCalculator (subdomain) {
-    const years = app.$utils.priceCalculator(subdomain.length).years
+    const years = 1 // app.$utils.priceCalculator(subdomain.length).years
     return years * 31536000
   },
 
@@ -66,7 +66,7 @@ const apiFactory = (app, $axios) => ({
           subdomain,
           accounts[0],
           this.durationCalculator(subdomain),
-          twitterUsername,
+          twitterUsername || '',
           this.resolverAddress
         )
         .send({

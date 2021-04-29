@@ -2,29 +2,29 @@ const utilsFactory = app => ({
   priceCalculator (subdomainLength) {
     switch (parseInt(subdomainLength)) {
       case 0:
-        return { ones: 1, years: 1 }
+        return 1
       case 1:
-        return { ones: 1000000000, years: 3 }
+        return 1000000000
       case 2:
-        return { ones: 100000000, years: 3 }
+        return 100000000
       case 3:
-        return { ones: 10000000, years: 3 }
+        return 10000000
       case 4:
-        return { ones: 1000000, years: 3 }
+        return 1000000
       case 5:
-        return { ones: 100000, years: 1 }
+        return 100000
       case 6:
-        return { ones: 10000, years: 1 }
+        return 10000
       case 7:
-        return { ones: 1000, years: 1 }
+        return 1000
       case 8:
-        return { ones: 100, years: 1 }
+        return 100
       case 9:
-        return { ones: 10, years: 1 }
+        return 10
       case 10:
-        return { ones: 1, years: 1 }
+        return 1
       default:
-        return { ones: 1, years: 1 }
+        return 1
     }
   }
 })
