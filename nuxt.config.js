@@ -61,9 +61,20 @@ module.exports = {
     '@nuxtjs/axios'
   ],
 
-  serverMiddleware: [
-    { path: '/api', handler: '~/server-middleware/api.js' }
-  ],
+  serverMiddleware: [],
+
+  proxy: {
+    '/api': {
+      target: '/.netlify/functions/dns',
+      pathRewrite: {
+        '^/api': '/'
+      }
+    }
+  },
+
+  generate: {
+    fallback: true
+  },
 
   /*
     ** Build configuration

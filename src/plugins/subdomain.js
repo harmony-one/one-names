@@ -97,7 +97,8 @@ const apiFactory = (app, $axios, $config) => ({
   },
 
   async test () {
-    await $axios.$get(`${window.location.origin}/api/test`)
+    const response = await $axios.$get(`${window.location.origin}/api`)
+    console.log(response)
   }
 })
 
