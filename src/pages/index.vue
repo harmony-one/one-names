@@ -58,7 +58,7 @@
             </div>
             <div v-if="confirmation" class="confirmation_result">
               <div>Registered!</div>
-              <div><span class="green">{{ safeHostname }}</span> is yours.</div>
+              <div><a :href="`https://${safeHostname}`" target="_blank">{{ safeHostname }}</a> is yours.</div>
             </div>
             <div v-if="confirmation" class="confirmation">
               <a :href="`https://explorer.pops.one/#/tx/${confirmation.transactionHash}`" target="_blank">Confirmation</a>
@@ -364,8 +364,7 @@ form {
       margin-right: 10px;
 
       a {
-        color: #fff;
-        font-size: 16px;
+        color: $green;
 
         &:hover {
           opacity: 0.7;

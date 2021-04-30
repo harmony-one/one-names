@@ -1,8 +1,12 @@
-require('dotenv').config()
 const webpack = require('webpack')
 
 module.exports = {
   ssr: false,
+
+  publicRuntimeConfig: {
+    WEB3_URL: process.env.WEB3_URL,
+    ENS_ADDRESS: process.env.ENS_ADDRESS
+  },
 
   /*
     ** Headers of the page

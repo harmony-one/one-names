@@ -2,20 +2,50 @@ const express = require('express')
 const Web3 = require('web3')
 const ENS = require('@ensdomains/ensjs').default
 const sha3 = require('web3-utils').sha3
-const NODE_URL = 'https://api.s0.b.hmny.io'
-const ENS_ADDRESS = '0xB750e4B49cf1b5162F7EfC964B3df5E9bfC893AD'
+const AWS = require('aws-sdk')
+const WEB3_URL = process.env.WEB3_URL
+const ENS_ADDRESS = process.env.ENS_ADDRESS
 
 const app = express()
 app.use(express.json())
 
 const registerDns = (subdomain) => {
-  // TODO AWS Route 53 call
-  console.log('AWS call...')
+  const dnsName = `${subdomain}.crazy.one.`
+  const route53 = new AWS.Route53()
+
+  const params = {
+    ChangeBatch: {
+      Changes: [
+        {
+          Action: 'CREATE',
+          ResourceRecordSet: {
+            AliasTarget: {
+              DNSName: 'd3n81svffwacl0.cloudfront.net.',
+              HostedZoneId: 'Z2FDTNDATAQYW2',
+              EvaluateTargetHealth: false
+            },
+            Name: dnsName,
+            Type: 'A'
+          }
+        }
+      ],
+      Comment: 'Created via OneNames'
+    },
+    HostedZoneId: 'Z07603732N95PTMMN6HT2'
+  }
+
+  route53.changeResourceRecordSets(params, function (err, data) {
+    if (err) {
+      console.log(err, err.stack)
+    } else {
+      return data
+    }
+  })
 }
 
 const getLogs = async (txHash) => {
-  const web3 = new Web3(NODE_URL)
-  const provider = new Web3.providers.HttpProvider(NODE_URL)
+  const web3 = new Web3(WEB3_URL)
+  const provider = new Web3.providers.HttpProvider(WEB3_URL)
   const ens = new ENS({ provider, ensAddress: ENS_ADDRESS })
 
   const receipt = await web3.eth.getTransactionReceipt(txHash)

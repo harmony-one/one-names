@@ -5,13 +5,11 @@ const utils = require('web3-utils')
 const BN = require('bn.js')
 const { hash } = require('eth-ens-namehash')
 
-const ENS_ADDRESS = '0xB750e4B49cf1b5162F7EfC964B3df5E9bfC893AD'
-const NODE_URL = 'https://api.s0.b.hmny.io'
 const DOMAIN_NAME = 'crazy'
 const ETH_GAS_LIMIT = 6721900
 
 const EthRegistrarSubdomainRegistrar = require('../../build/contracts/EthRegistrarSubdomainRegistrar')
-const apiFactory = (app, $axios) => ({
+const apiFactory = (app, $axios, $config) => ({
   ens: null,
   web3: null,
   subdomainRegistrar: null,
@@ -22,9 +20,9 @@ const apiFactory = (app, $axios) => ({
 
     const accounts = await this.web3.eth.getAccounts()
 
-    const provider = new Web3.providers.HttpProvider(NODE_URL)
+    const provider = new Web3.providers.HttpProvider($config.WEB3_URL)
 
-    this.ens = new ENS({ provider, ensAddress: ENS_ADDRESS })
+    this.ens = new ENS({ provider, ensAddress: $config.ENS_ADDRESS })
 
     this.resolverAddress = await this.ens.name('resolver.one').getAddress()
 
@@ -77,7 +75,7 @@ const apiFactory = (app, $axios) => ({
         })
 
       // Update DNS here
-      // await this.updateDns(tx.transactionHash)
+      await this.updateDns(tx.transactionHash)
 
       return tx
     } catch (e) {
@@ -95,11 +93,15 @@ const apiFactory = (app, $axios) => ({
   },
 
   async updateDns (tx) {
-    await $axios.$post('/api/dns', { tx })
+    await $axios.$post(`${window.location.origin}/api/dns`, { tx })
+  },
+
+  async test () {
+    await $axios.$get(`${window.location.origin}/api/test`)
   }
 })
 
-export default ({ app, $axios }, inject) => {
-  const subdomain = apiFactory(app, $axios)
+export default ({ app, $axios, $config }, inject) => {
+  const subdomain = apiFactory(app, $axios, $config)
   inject('subdomain', subdomain)
 }
