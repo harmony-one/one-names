@@ -97,7 +97,7 @@ const apiFactory = (app, $axios, $config) => ({
   },
 
   async test () {
-    const response = await $axios.$get(`${window.location.origin}/api`)
+    const response = await $axios.$get(`${window.location.origin}/.netlify/functions/dns`)
     console.log(response)
   }
 })
