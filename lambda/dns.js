@@ -6,21 +6,23 @@ const AWS = require('aws-sdk')
 const WEB3_URL = process.env.WEB3_URL
 const ENS_ADDRESS = process.env.ENS_ADDRESS
 
+const configPath = '/tmp/.aws.json'
+
 // Create AWS config file from ENV vars
 const init = () => {
-  const path = '/tmp/.aws.json'
   const data = {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE,
+    region: 'us-east-1'
   }
 
-  fs.writeFileSync(path, JSON.stringify(data))
-  AWS.config.loadFromPath(path)
+  fs.writeFileSync(configPath, JSON.stringify(data))
 }
 
 const registerDns = (subdomain) => {
   const dnsName = `${subdomain}.crazy.one.`
 
+  AWS.config.loadFromPath(configPath)
   const route53 = new AWS.Route53()
 
   const params = {
