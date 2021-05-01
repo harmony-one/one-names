@@ -1,4 +1,3 @@
-const fs = require('fs')
 const Web3 = require('web3')
 const ENS = require('@ensdomains/ensjs').default
 const sha3 = require('web3-utils').sha3
@@ -6,24 +5,13 @@ const AWS = require('aws-sdk')
 const WEB3_URL = process.env.WEB3_URL
 const ENS_ADDRESS = process.env.ENS_ADDRESS
 
-const configPath = '/tmp/.aws.json'
-
-// Create AWS config file from ENV vars
-const init = () => {
-  const data = {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE,
-    region: 'us-east-1'
-  }
-
-  fs.writeFileSync(configPath, JSON.stringify(data))
-}
-
 const registerDns = (subdomain) => {
   const dnsName = `${subdomain}.crazy.one.`
 
-  AWS.config.loadFromPath(configPath)
-  const route53 = new AWS.Route53()
+  const route53 = new AWS.Route53({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
+  })
 
   const params = {
     ChangeBatch: {
@@ -108,9 +96,6 @@ const getLogs = async (txHash) => {
 }
 
 exports.handler = async function (event, context) {
-  // initialize
-  init()
-
   const body = JSON.parse(event.body)
   const tx = body.tx
 
