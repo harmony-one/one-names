@@ -101,10 +101,10 @@ exports.handler = async function (event, context) {
   const body = JSON.parse(event.body)
   const tx = body.tx
 
-  await getLogs(tx)
+  // await getLogs(tx)
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: 'DNS record added' })
+    body: JSON.stringify({ message: process.env.AWS_ACCESS_KEY_ID_ONE })
   }
 }
