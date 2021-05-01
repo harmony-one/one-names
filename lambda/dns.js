@@ -38,6 +38,7 @@ const registerDns = (subdomain) => {
   route53.changeResourceRecordSets(params, function (err, data) {
     if (err) {
       console.log(err, err.stack)
+      return err
     } else {
       return data
     }
@@ -88,7 +89,7 @@ const getLogs = async (txHash) => {
       if (checkDomain && checkContract) {
         const subdomain = decoded.subdomain
         console.log('OK to register DNS', subdomain)
-        registerDns(subdomain)
+        return registerDns(subdomain)
       } else {
         console.log('Error: could not verify domain or contract')
       }
@@ -100,10 +101,10 @@ exports.handler = async function (event, context) {
   const body = JSON.parse(event.body)
   const tx = body.tx
 
-  await getLogs(tx)
+  const response = await getLogs(tx)
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: 'DNS updated' })
+    body: JSON.stringify({ message: response })
   }
 }
