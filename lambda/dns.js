@@ -13,6 +13,8 @@ const registerDns = (subdomain) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
   })
 
+  console.log('test', process.env.AWS_ACCESS_KEY_ID_ONE)
+
   const params = {
     ChangeBatch: {
       Changes: [
