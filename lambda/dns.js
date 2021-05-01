@@ -105,14 +105,14 @@ const getLogs = async (txHash) => {
   })
 }
 
-// initialize
-init()
-
 exports.handler = async function (event, context) {
+  // initialize
+  init()
+
   const body = JSON.parse(event.body)
   const tx = body.tx
 
-  // await getLogs(tx)
+  await getLogs(tx)
 
   return {
     statusCode: 200,
