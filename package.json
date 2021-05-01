@@ -16,6 +16,7 @@
     "@harmony-js/core": "^0.1.57",
     "@harmony-js/utils": "^0.1.56",
     "@nuxtjs/axios": "^5.13.1",
+    "aws-config": "^1.4.0",
     "aws-sdk": "^2.895.0",
     "bn.js": "^5.2.0",
     "dotenv": "^8.2.0",

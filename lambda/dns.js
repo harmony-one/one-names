@@ -2,18 +2,17 @@ const Web3 = require('web3')
 const ENS = require('@ensdomains/ensjs').default
 const sha3 = require('web3-utils').sha3
 const AWS = require('aws-sdk')
+const awsConfig = require('aws-config')
 const WEB3_URL = process.env.WEB3_URL
 const ENS_ADDRESS = process.env.ENS_ADDRESS
 
 const registerDns = (subdomain) => {
   const dnsName = `${subdomain}.crazy.one.`
 
-  const route53 = new AWS.Route53({
+  const route53 = new AWS.Route53(awsConfig({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
-  })
-
-  console.log('test', process.env.AWS_ACCESS_KEY_ID_ONE)
+  }))
 
   const params = {
     ChangeBatch: {
@@ -101,10 +100,10 @@ exports.handler = async function (event, context) {
   const body = JSON.parse(event.body)
   const tx = body.tx
 
-  // await getLogs(tx)
+  await getLogs(tx)
 
   return {
     statusCode: 200,
-    body: JSON.stringify({ message: process.env.AWS_ACCESS_KEY_ID_ONE })
+    body: JSON.stringify({ message: 'DNS updated' })
   }
 }
