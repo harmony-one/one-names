@@ -8,7 +8,7 @@ const ENS_ADDRESS = process.env.ENS_ADDRESS
 
 // Create AWS config file from ENV vars
 const init = () => {
-  const path = './.aws.json'
+  const path = '/tmp/.aws.json'
   const data = {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
@@ -112,7 +112,7 @@ exports.handler = async function (event, context) {
   const body = JSON.parse(event.body)
   const tx = body.tx
 
-  await getLogs(tx)
+  // await getLogs(tx)
 
   return {
     statusCode: 200,
