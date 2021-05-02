@@ -6,6 +6,9 @@
         <div class="logo">
           <img src="/images/onenameslogo.svg">
         </div>
+        <button @click="$subdomain.test('0x9af094f433bd6eea580e8a2dd810b12833b46a9f77a9002c101741722bc3a2e2')">
+          Test
+        </button>
         <div v-if="noWallet" class="loading">
           MetaMask wallet not installed 😔
         </div>

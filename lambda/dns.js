@@ -99,10 +99,29 @@ exports.handler = async function (event, context) {
   const body = JSON.parse(event.body)
   const tx = body.tx
 
-  await getLogs(tx)
+  // await getLogs(tx)
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ message: 'DNS updated' })
+  const route53 = new AWS.Route53({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
+  })
+
+  const params = {
+    HostedZoneId: 'Z07603732N95PTMMN6HT2',
+    MaxItems: '2',
+    StartRecordName: 'givppppppp.crazy.one.'
+  }
+
+  try {
+    const stored = await route53.listResourceRecordSets(params).promise()
+    return {
+      statusCode: 200,
+      body: JSON.stringify(stored)
+    }
+  } catch (err) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify(err)
+    }
   }
 }
