@@ -1,4 +1,5 @@
 const webpack = require('webpack')
+const description = 'A unique identity for community members to enter into the Harmony dApp ecosystem.'
 
 module.exports = {
   ssr: false,
@@ -12,11 +13,15 @@ module.exports = {
     ** Headers of the page
     */
   head: {
-    title: 'OneNames',
+    title: 'ONE Names',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'OneNames.' }
+      { hid: 'description', name: 'description', content: description },
+      { hid: 'og:image', property: 'og:image', content: 'https://crazy.one/images/social.png' },
+      { hid: 'twitter:image', property: 'twitter:image', content: 'https://crazy.one/images/social.png' },
+      { hid: 'twitter:description', property: 'twitter:description', content: description },
+      { hid: 'twitter:card', property: 'twitter:card', content: 'summary_large_image' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
