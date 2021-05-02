@@ -9,10 +9,12 @@ const ENS_ADDRESS = process.env.ENS_ADDRESS
 const registerDns = (subdomain) => {
   const dnsName = `${subdomain}.crazy.one.`
 
-  const route53 = new AWS.Route53(awsConfig({
+  AWS.config = awsConfig({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
-  }))
+  })
+
+  const route53 = new AWS.Route53()
 
   const params = {
     ChangeBatch: {
