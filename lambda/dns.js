@@ -106,14 +106,30 @@ exports.handler = async function (event, context) {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
   })
 
+  const dnsName = 'giv1111222333444.crazy.one.'
   const params = {
-    HostedZoneId: 'Z07603732N95PTMMN6HT2',
-    MaxItems: '2',
-    StartRecordName: 'givppppppp.crazy.one.'
+    ChangeBatch: {
+      Changes: [
+        {
+          Action: 'CREATE',
+          ResourceRecordSet: {
+            AliasTarget: {
+              DNSName: 'd3n81svffwacl0.cloudfront.net.',
+              HostedZoneId: 'Z2FDTNDATAQYW2',
+              EvaluateTargetHealth: false
+            },
+            Name: dnsName,
+            Type: 'A'
+          }
+        }
+      ],
+      Comment: 'Created via OneNames'
+    },
+    HostedZoneId: 'Z07603732N95PTMMN6HT2'
   }
 
   try {
-    const stored = await route53.listResourceRecordSets(params).promise()
+    const stored = await route53.changeResourceRecordSets(params).promise()
     return {
       statusCode: 200,
       body: JSON.stringify(stored)
