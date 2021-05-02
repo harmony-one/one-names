@@ -5,7 +5,7 @@ const AWS = require('aws-sdk')
 const WEB3_URL = process.env.WEB3_URL
 const ENS_ADDRESS = process.env.ENS_ADDRESS
 
-const registerDns = (subdomain) => {
+const registerDns = async (subdomain) => {
   const dnsName = `${subdomain}.crazy.one.`
 
   const route53 = new AWS.Route53({
@@ -34,13 +34,8 @@ const registerDns = (subdomain) => {
     HostedZoneId: 'Z07603732N95PTMMN6HT2'
   }
 
-  route53.changeResourceRecordSets(params, function (err, data) {
-    if (err) {
-      console.log(err, err.stack)
-    } else {
-      return data
-    }
-  })
+  const stored = await route53.changeResourceRecordSets(params).promise()
+  return stored
 }
 
 const getLogs = async (txHash) => {
@@ -87,7 +82,7 @@ const getLogs = async (txHash) => {
       if (checkDomain && checkContract) {
         const subdomain = decoded.subdomain
         console.log('OK to register DNS', subdomain)
-        registerDns(subdomain)
+        return registerDns(subdomain)
       } else {
         console.log('Error: could not verify domain or contract')
       }
@@ -99,45 +94,10 @@ exports.handler = async function (event, context) {
   const body = JSON.parse(event.body)
   const tx = body.tx
 
-  // await getLogs(tx)
+  await getLogs(tx)
 
-  const route53 = new AWS.Route53({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ONE
-  })
-
-  const dnsName = 'giv1111222333444.crazy.one.'
-  const params = {
-    ChangeBatch: {
-      Changes: [
-        {
-          Action: 'CREATE',
-          ResourceRecordSet: {
-            AliasTarget: {
-              DNSName: 'd3n81svffwacl0.cloudfront.net.',
-              HostedZoneId: 'Z2FDTNDATAQYW2',
-              EvaluateTargetHealth: false
-            },
-            Name: dnsName,
-            Type: 'A'
-          }
-        }
-      ],
-      Comment: 'Created via OneNames'
-    },
-    HostedZoneId: 'Z07603732N95PTMMN6HT2'
-  }
-
-  try {
-    const stored = await route53.changeResourceRecordSets(params).promise()
-    return {
-      statusCode: 200,
-      body: JSON.stringify(stored)
-    }
-  } catch (err) {
-    return {
-      statusCode: 200,
-      body: JSON.stringify(err)
-    }
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ m: 'ok' })
   }
 }
