@@ -43,51 +43,62 @@ const getLogs = async (txHash) => {
   const provider = new Web3.providers.HttpProvider(WEB3_URL)
   const ens = new ENS({ provider, ensAddress: ENS_ADDRESS })
 
+  const start = async (receipt) => {
+    await asyncForEach(receipt.logs, async (log) => {
+      console.log('FOREACH')
+      try {
+        const decoded = web3.eth.abi.decodeLog(
+          [
+            {
+              indexed: true,
+              name: 'label',
+              type: 'bytes32'
+            },
+            {
+              indexed: false,
+              name: 'subdomain',
+              type: 'string'
+            },
+            {
+              indexed: true,
+              name: 'owner',
+              type: 'address'
+            },
+            {
+              indexed: false,
+              name: 'price',
+              type: 'uint256'
+            }
+          ],
+          log.data,
+          log.topics.slice(1)
+        )
+
+        const subdomainRegisterAddress = await ens.name('crazy.one').getAddress()
+        const checkDomain = decoded.label === sha3('crazy')
+        const checkContract = receipt.to.toLowerCase() === subdomainRegisterAddress.toString().toLowerCase()
+
+        // confirmed. OK to continue
+        if (checkDomain && checkContract) {
+          const subdomain = decoded.subdomain
+          console.log('OK to register DNS', subdomain)
+          await registerDns(subdomain)
+        } else {
+          console.log('Error: could not verify domain or contract')
+        }
+      } catch (e) {}
+    })
+  }
+
   const receipt = await web3.eth.getTransactionReceipt(txHash)
 
-  receipt.logs.forEach(async (log) => {
-    try {
-      const decoded = web3.eth.abi.decodeLog(
-        [
-          {
-            indexed: true,
-            name: 'label',
-            type: 'bytes32'
-          },
-          {
-            indexed: false,
-            name: 'subdomain',
-            type: 'string'
-          },
-          {
-            indexed: true,
-            name: 'owner',
-            type: 'address'
-          },
-          {
-            indexed: false,
-            name: 'price',
-            type: 'uint256'
-          }
-        ],
-        log.data,
-        log.topics.slice(1)
-      )
+  await start(receipt)
+}
 
-      const subdomainRegisterAddress = await ens.name('crazy.one').getAddress()
-      const checkDomain = decoded.label === sha3('crazy')
-      const checkContract = receipt.to.toLowerCase() === subdomainRegisterAddress.toString().toLowerCase()
-
-      // confirmed. OK to continue
-      if (checkDomain && checkContract) {
-        const subdomain = decoded.subdomain
-        console.log('OK to register DNS', subdomain)
-        return registerDns(subdomain)
-      } else {
-        console.log('Error: could not verify domain or contract')
-      }
-    } catch (e) {}
-  })
+async function asyncForEach (array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
 }
 
 exports.handler = async function (event, context) {
