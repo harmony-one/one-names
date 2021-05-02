@@ -143,6 +143,14 @@ export default {
   },
   mounted () {
     this.init()
+
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts && accounts.length) {
+        this.account = accounts[0]
+      } else {
+        this.account = null
+      }
+    })
   },
   methods: {
     priceFormat (price) {
