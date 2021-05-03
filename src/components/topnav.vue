@@ -8,9 +8,6 @@
         <li>
           <a href="https://onenames.gitbook.io/onenames/" target="_blank">About</a>
         </li>
-        <li>
-          <a href="https://onenames.gitbook.io/onenames/faq" target="_blank">FAQ</a>
-        </li>
       </ul>
     </div>
     <div v-if="!loading && !noWallet">
