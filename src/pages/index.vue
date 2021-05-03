@@ -27,7 +27,6 @@
             <div v-if="hostname" class="hostname">
               {{ hostname }} <span v-if="invalid" class="red">Invalid Hostname</span>
             </div>
-            <price v-if="!invalid" :characters="encodedSearch.length" @price="priceChange" />
           </div>
 
           <div class="search_result_container">
@@ -92,7 +91,7 @@ import VModal from 'vue-js-modal'
 import topnav from '~/components/topnav.vue'
 import price from '~/components/price.vue'
 
-const punycode = require('punycode')
+const punycode = require('punycode/')
 const isValidHostname = require('is-valid-hostname')
 Vue.use(VModal)
 
@@ -110,7 +109,6 @@ export default {
       connected: false,
       searchDisabled: false,
       search: '',
-      encodedSearch: '',
       invalid: false,
       hostname: null,
       safeHostname: null,
@@ -125,7 +123,6 @@ export default {
   },
   watch: {
     search (val, oldVal) {
-      this.encodedSearch = punycode.toASCII(val)
       if (val) {
         this.invalid = false
         this.searchResult = null
@@ -184,14 +181,14 @@ export default {
       }
     },
     async searchName () {
-      if (!isValidHostname(this.encodedSearch)) {
+      if (!isValidHostname(punycode.toASCII(this.search))) {
         this.invalid = true
         return
       }
       this.confirmation = null
       this.searchText = 'Loading'
       this.searchDisabled = true
-      this.searchResult = await this.$subdomain.checkDomain(this.encodedSearch)
+      this.searchResult = await this.$subdomain.checkDomain(this.search)
       this.searchText = 'Search'
       this.searchDisabled = false
     },
@@ -211,7 +208,7 @@ export default {
       this.safeHostname = this.hostname
       this.registering = true
 
-      const response = await this.$subdomain.register(this.encodedSearch, this.twitter)
+      const response = await this.$subdomain.register(this.search, this.twitter)
       this.search = ''
       this.registering = false
       this.searchResult = false

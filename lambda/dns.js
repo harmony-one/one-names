@@ -2,11 +2,17 @@ const Web3 = require('web3')
 const ENS = require('@ensdomains/ensjs').default
 const sha3 = require('web3-utils').sha3
 const AWS = require('aws-sdk')
+const punycode = require('punycode/')
+
 const WEB3_URL = process.env.WEB3_URL
 const ENS_ADDRESS = process.env.ENS_ADDRESS
 
 const registerDns = async (subdomain) => {
-  const dnsName = `${subdomain}.crazy.one.`
+  // TODO convert ansii to emoji here
+  const encodedSubdomain = punycode.toASCII(subdomain)
+  const dnsName = `${encodedSubdomain}.crazy.one.`
+
+  console.log('DNS', dnsName)
 
   const route53 = new AWS.Route53({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID_ONE,
@@ -45,7 +51,6 @@ const getLogs = async (txHash) => {
 
   const start = async (receipt) => {
     await asyncForEach(receipt.logs, async (log) => {
-      console.log('FOREACH')
       try {
         const decoded = web3.eth.abi.decodeLog(
           [
@@ -81,7 +86,6 @@ const getLogs = async (txHash) => {
         // confirmed. OK to continue
         if (checkDomain && checkContract) {
           const subdomain = decoded.subdomain
-          console.log('OK to register DNS', subdomain)
           await registerDns(subdomain)
         } else {
           console.log('Error: could not verify domain or contract')
