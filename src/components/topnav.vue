@@ -12,7 +12,7 @@
     </div>
     <div v-if="!loading && !noWallet">
       <div v-if="account" class="account">
-        Connected <span>{{ account.substring(0, 20) }}...</span>
+        Connected <span>{{ $utils.oneAddress(account) }}</span>
       </div>
       <div v-else>
         <button @click="$subdomain.connect()">

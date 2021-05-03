@@ -1,4 +1,9 @@
+import { getAddress } from '@harmony-js/crypto'
+
 const utilsFactory = app => ({
+  oneAddress (address) {
+    return getAddress(address).bech32
+  },
   priceCalculator (subdomainLength) {
     switch (parseInt(subdomainLength)) {
       case 0:

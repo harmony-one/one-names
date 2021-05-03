@@ -36,7 +36,7 @@
 
             <div v-if="searchResult">
               <div v-if="Number(searchResult.subdomainAddress) !== 0">
-                Sorry, <span class="green">{{ hostname }}</span> is taken<pre>Owner: {{ searchResult.subdomainAddress }}</pre>
+                Sorry, <span class="green">{{ hostname }}</span> is taken<pre>Owner: {{ $utils.oneAddress(searchResult.subdomainAddress) }}</pre>
               </div>
               <div v-else class="search_result">
                 <div><span class="green">{{ hostname }}</span> is available.</div>
@@ -57,7 +57,7 @@
             </div>
             <div v-if="confirmation" class="confirmation_result">
               <div>Registered!</div>
-              <div><a :href="`https://${safeHostname}`" target="_blank">{{ safeHostname }}</a> is yours and linked to <span class="mono">{{ account }}</span></div>
+              <div><a :href="`https://${safeHostname}`" target="_blank">{{ safeHostname }}</a> is yours and linked to <span class="mono">{{ $utils.oneAddress(account) }}</span></div>
             </div>
             <div v-if="confirmation" class="confirmation">
               <a :href="`https://explorer.pops.one/#/tx/${confirmation.transactionHash}`" target="_blank">Confirmation</a>
