@@ -56,11 +56,20 @@
               Registering. Please wait <PulseLoader size="8px" />
             </div>
             <div v-if="confirmation" class="confirmation_result">
-              <div>Registered!</div>
-              <div><a :href="`https://${safeHostname}`" target="_blank">{{ safeHostname }}</a> is yours and linked to <span class="mono">{{ $utils.oneAddress(account) }}</span></div>
+              <div>Subdomain <span class="green">{{ safeHostname }}</span> registered on Harmony</div>
+              <div><span class="mono">Linked to: {{ $utils.oneAddress(account) }}</span></div>
             </div>
             <div v-if="confirmation" class="confirmation">
               <a :href="`https://explorer.pops.one/#/tx/${confirmation.transactionHash}`" target="_blank">Confirmation</a>
+            </div>
+
+            <div class="dnsRegistration">
+              <div v-if="dnsRegistering">
+                Setting up your custom url {{ safeHostname }} <PulseLoader size="8px" />
+              </div>
+              <div v-if="dnsRegistered" class="confirmation_result">
+                <a :href="`https://${safeHostname}`" target="_blank">{{ safeHostname }}</a>
+              </div>
             </div>
           </div>
         </div>
@@ -89,7 +98,6 @@ import Vue from 'vue'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 import VModal from 'vue-js-modal'
 import topnav from '~/components/topnav.vue'
-import price from '~/components/price.vue'
 
 const punycode = require('punycode/')
 const isValidHostname = require('is-valid-hostname')
@@ -98,7 +106,6 @@ Vue.use(VModal)
 export default {
   components: {
     topnav,
-    price,
     PulseLoader
   },
   data () {
@@ -118,7 +125,9 @@ export default {
       price: 0,
       registering: false,
       confirmation: null,
-      twitter: null
+      twitter: null,
+      dnsRegistering: false,
+      dnsRegistered: false
     }
   },
   watch: {
@@ -127,6 +136,8 @@ export default {
         this.invalid = false
         this.searchResult = null
         this.confirmation = null
+        this.dnsRegistering = false
+        this.dnsRegistered = false
         this.validateHostname()
       } else {
         this.hostname = null
@@ -213,6 +224,15 @@ export default {
       this.registering = false
       this.searchResult = false
       this.confirmation = response
+
+      // now do DNS
+      this.addDns()
+    },
+    async addDns () {
+      this.dnsRegistering = true
+      const response = await this.$subdomain.updateDns(this.confirmation.transactionHash)
+      this.dnsRegistering = false
+      this.dnsRegistered = true
     }
   }
 }
@@ -372,19 +392,22 @@ form {
   }
 
   .confirmation_result {
-    display: flex;
     justify-content: center;
     div {
       margin-right: 10px;
+    }
 
-      a {
-        color: $green;
+    a {
+      color: $green;
 
-        &:hover {
-          opacity: 0.7;
-        }
+      &:hover {
+        opacity: 0.7;
       }
     }
+  }
+
+  .dnsRegistration {
+    margin-top: 20px;
   }
 
   .confirmation {

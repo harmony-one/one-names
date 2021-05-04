@@ -74,9 +74,6 @@ const apiFactory = (app, $axios, $config) => ({
           gasPrice: new BN(await this.web3.eth.getGasPrice()).mul(new BN(1))
         })
 
-      // Update DNS here
-      await this.updateDns(tx.transactionHash)
-
       return tx
     } catch (e) {
       console.log('error', e)
