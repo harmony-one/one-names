@@ -45,7 +45,7 @@ const apiFactory = (app, $axios, $config) => ({
       return { subdomainAddress, price: this.price }
     } catch (e) {
       console.log('error', e)
-      app.$toast.error('Error: Are you on the correct network?', { duration: 5000 })
+      app.$toast.error('Error: Are you on the correct MetaMask network?', { duration: 5000 })
     }
   },
 
