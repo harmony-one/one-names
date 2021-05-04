@@ -25,7 +25,7 @@
 
           <div class="priceContainer">
             <div v-if="hostname" class="hostname">
-              {{ hostname }} <span v-if="invalid" class="red">Invalid Hostname</span>
+              {{ hostname }}
             </div>
           </div>
 
@@ -116,7 +116,6 @@ export default {
       connected: false,
       searchDisabled: false,
       search: '',
-      invalid: false,
       hostname: null,
       safeHostname: null,
       searchText: 'Search',
@@ -133,7 +132,8 @@ export default {
   watch: {
     search (val, oldVal) {
       if (val) {
-        this.invalid = false
+        val = val.replace('.', '')
+        this.search = val.replace(' ', '')
         this.searchResult = null
         this.confirmation = null
         this.dnsRegistering = false
@@ -193,7 +193,7 @@ export default {
     },
     async searchName () {
       if (!isValidHostname(punycode.toASCII(this.search))) {
-        this.invalid = true
+        this.$toast.error('Invalid hostname. Please check format.', { duration: 5000 })
         return
       }
       this.confirmation = null

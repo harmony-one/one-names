@@ -37,11 +37,16 @@ const apiFactory = (app, $axios, $config) => ({
   },
 
   async checkDomain (subdomain) {
-    const subdomainAddress = await this.ens.name(`${subdomain}.crazy.one`).getAddress()
+    try {
+      const subdomainAddress = await this.ens.name(`${subdomain}.crazy.one`).getAddress()
 
-    this.price = await this.subdomainRegistrar.methods.rentPrice(subdomain, this.durationCalculator(subdomain)).call()
+      this.price = await this.subdomainRegistrar.methods.rentPrice(subdomain, this.durationCalculator(subdomain)).call()
 
-    return { subdomainAddress, price: this.price }
+      return { subdomainAddress, price: this.price }
+    } catch (e) {
+      console.log('error', e)
+      app.$toast.error('Error: Are you on the correct network?', { duration: 5000 })
+    }
   },
 
   async connect () {
@@ -77,6 +82,7 @@ const apiFactory = (app, $axios, $config) => ({
       return tx
     } catch (e) {
       console.log('error', e)
+      app.$toast.error('Error: Could not complete registration', { duration: 5000 })
     }
   },
 

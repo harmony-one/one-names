@@ -16,6 +16,7 @@
     "@harmony-js/core": "^0.1.57",
     "@harmony-js/utils": "^0.1.56",
     "@nuxtjs/axios": "^5.13.1",
+    "@nuxtjs/toast": "^3.3.1",
     "aws-sdk": "^2.847.0",
     "bn.js": "^5.2.0",
     "dotenv": "^8.2.0",

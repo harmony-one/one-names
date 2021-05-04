@@ -63,8 +63,13 @@ module.exports = {
     ** Nuxt.js modules
     */
   modules: [
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/toast'
   ],
+
+  toast: {
+    position: 'top-center'
+  },
 
   serverMiddleware: [],
 
