@@ -60,7 +60,7 @@
               <div><span class="mono">Linked to: {{ $utils.oneAddress(account) }}</span></div>
             </div>
             <div v-if="confirmation" class="confirmation">
-              <a :href="`https://explorer.pops.one/#/tx/${confirmation.transactionHash}`" target="_blank">Confirmation</a>
+              <a :href="`https://explorer.harmony.one/#/tx/${confirmation.transactionHash}`" target="_blank">Confirmation</a>
             </div>
 
             <div class="dnsRegistration">
