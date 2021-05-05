@@ -6,13 +6,7 @@
         <div class="logo">
           <img src="/images/onenameslogo.svg">
         </div>
-        <div v-if="noWallet" class="loading">
-          MetaMask wallet not installed 😔
-        </div>
-        <div v-if="loading" class="loading">
-          <PulseLoader />
-        </div>
-        <div v-if="!loading && !noWallet">
+        <div>
           <div>
             <form @submit.prevent="searchName">
               <i class="fa fa-search icon" />
@@ -150,13 +144,15 @@ export default {
   mounted () {
     this.init()
 
-    window.ethereum.on('accountsChanged', (accounts) => {
-      if (accounts && accounts.length) {
-        this.account = accounts[0]
-      } else {
-        this.account = null
-      }
-    })
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts && accounts.length) {
+          this.account = accounts[0]
+        } else {
+          this.account = null
+        }
+      })
+    }
   },
   methods: {
     priceFormat (price) {
@@ -228,7 +224,7 @@ export default {
     },
     async addDns () {
       this.dnsRegistering = true
-      const response = await this.$subdomain.updateDns(this.confirmation.transactionHash)
+      await this.$subdomain.updateDns(this.confirmation.transactionHash)
       this.dnsRegistering = false
       this.dnsRegistered = true
     }
@@ -276,6 +272,7 @@ text-align: center;
 
   .logo {
     margin-bottom: 50px;
+    height: 65px;
     img {
       width: 323px;
     }
