@@ -29,11 +29,6 @@ module.exports = {
         rel: 'stylesheet',
         href:
           'https://fonts.googleapis.com/css?family=Overpass:100,200,300,400,600,700,800,900|Overpass+Mono:300,400'
-      },
-      {
-        rel: 'stylesheet',
-        href:
-          'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
       }
     ]
   },

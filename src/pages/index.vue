@@ -9,7 +9,7 @@
         <div>
           <div>
             <form @submit.prevent="searchName">
-              <i class="fa fa-search icon" />
+              <i class="icon" />
               <input v-model="search" class="search" placeholder="Search for a ONE name" spellcheck="false">
               <button :disabled="searchDisabled || (search && search.length < 1)" type="submit">
                 {{ searchText }}
@@ -71,7 +71,7 @@
       <modal name="twitter-modal" :click-to-close="false" :focus-trap="true">
         <div class="twitter_modal">
           <div>Do you want to link this registration to your Twitter profile?</div>
-          <i class="fa fa-twitter icon" />
+          <i class="twitter-icon" />
           <input v-model="twitter" type="text" placeholder="Twitter username" spellcheck="false">
           <div class="button_container">
             <button @click="register(true)">
@@ -294,9 +294,12 @@ form {
   }
 
   .icon {
-      padding: 10px;
-      min-width: 40px;
-      margin-top: 18px;
+    padding: 10px;
+    margin-top: 30px;
+    margin-left: 15px;
+    width: 27px;
+    height: 27px;
+    background: url(/images/search.svg) no-repeat;
   }
 
   button {
@@ -426,14 +429,15 @@ form {
     color: #ccc;
   }
 
-  .icon {
+  .twitter-icon {
     padding: 10px;
-    min-width: 40px;
-    margin-top: 50px;
+    margin-top: 62px;
     position: absolute;
-    font-size: 30px;
-    color: #1da1f8;
-    margin-left: 0 !important;
+    margin-left: 15px !important;
+    width: 27px;
+    height: 27px;
+    filter: invert(50%) sepia(83%) saturate(1482%) hue-rotate(178deg) brightness(96%) contrast(104%);
+    background: url(/images/twitter.svg) no-repeat;
   }
 
   input {
