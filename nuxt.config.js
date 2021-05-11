@@ -18,8 +18,8 @@ module.exports = {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: description },
-      { hid: 'og:image', property: 'og:image', content: 'https://beta.crazy.one/images/social.png' },
-      { hid: 'twitter:image', property: 'twitter:image', content: 'https://beta.crazy.one/images/social.png' },
+      { hid: 'og:image', property: 'og:image', content: 'https://crazy.one/images/social.png' },
+      { hid: 'twitter:image', property: 'twitter:image', content: 'https://crazy.one/images/social.png' },
       { hid: 'twitter:description', property: 'twitter:description', content: description },
       { hid: 'twitter:card', property: 'twitter:card', content: 'summary_large_image' }
     ],
