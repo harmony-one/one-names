@@ -10,8 +10,7 @@ body {
   font-size: 16px;
   margin: 0;
   padding: 0;
-  // background-color: rgb(240, 246, 250);
-  background-color: rgb(12, 147, 234);
+  background-color: #00b0ef;
 }
 
 input:focus,

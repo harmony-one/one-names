@@ -13,7 +13,7 @@ module.exports = {
     ** Headers of the page
     */
   head: {
-    title: 'ONE Names',
+    title: 'Crazy.ONE',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -85,6 +85,11 @@ module.exports = {
     ** Build configuration
     */
   build: {
+    babel: {
+      plugins: [
+        ['@babel/plugin-proposal-private-methods', { loose: true }]
+      ]
+    },
     collapseBooleanAttributes: true,
     decodeEntities: true,
     minifyCSS: true,

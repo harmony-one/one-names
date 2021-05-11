@@ -3,7 +3,9 @@
     <div>
       <ul>
         <li>
-          <img src="https://assets.website-files.com/5ea98076e2f684f39f95888f/5ea98076e2f684fdc09588b9_harmony_logo.svg">
+          <a href="https://harmony.one" target="_blank">
+            <img src="/images/harmony-logo-only.svg">
+          </a>
         </li>
         <li>
           <a href="https://medium.com/harmony-one/harmony-community-launches-crazy-one-the-first-subdomain-nft-7db95bc53326" target="_blank">About</a>

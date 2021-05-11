@@ -4,13 +4,13 @@
     <div class="container">
       <div class="inner_container">
         <div class="logo">
-          <img src="/images/onenameslogo.svg">
+          <img src="/images/crazyone-logo2.svg">
         </div>
         <div>
           <div>
             <form @submit.prevent="searchName">
               <i class="icon" />
-              <input v-model="search" class="search" placeholder="Search for a ONE name" spellcheck="false">
+              <input v-model="search" class="search" placeholder="Search for a Crazy.ONE name" spellcheck="false">
               <button :disabled="searchDisabled || (search && search.length < 1)" type="submit">
                 {{ searchText }}
               </button>
@@ -25,7 +25,7 @@
 
           <div class="search_result_container">
             <div v-if="searchDisabled" class="search_result">
-              Searching <PulseLoader size="8px" />
+              Searching <PulseLoader size="8px" color="#69FABD" />
             </div>
 
             <div v-if="searchResult">
@@ -47,7 +47,7 @@
               </div>
             </div>
             <div v-if="registering" class="search_result">
-              Registering. Please wait <PulseLoader size="8px" />
+              Registering. Please wait <PulseLoader size="8px" color="#69FABD" />
             </div>
             <div v-if="confirmation" class="confirmation_result">
               <div>Subdomain <span class="green">{{ safeHostname }}</span> registered on Harmony</div>
@@ -59,7 +59,7 @@
 
             <div class="dnsRegistration">
               <div v-if="dnsRegistering">
-                Setting up your custom url {{ safeHostname }} <PulseLoader size="8px" />
+                Setting up your custom url {{ safeHostname }} <PulseLoader size="8px" color="#69FABD" />
               </div>
               <div v-if="dnsRegistered" class="confirmation_result">
                 <a :href="`https://${safeHostname}`" target="_blank">{{ safeHostname }}</a>
@@ -237,8 +237,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$green: #51ff9e;
+$green: #69FABD;
 $red: red;
+$button: #1B295E;
 
 .loading {
   color: #fff;
@@ -309,7 +310,7 @@ form {
   button {
     border-radius: 0px 6px 6px 0px;
     display: block;
-    background: rgb(51, 182, 255);
+    background: $button;
     color: white;
     font-size: 22px;
     font-family: Overpass;
@@ -369,7 +370,7 @@ form {
       button {
         border-radius: 6px;
         display: block;
-        background: rgb(51, 182, 255);
+        background: $button;
         color: white;
         font-size: 18px;
         font-family: Overpass;
@@ -470,7 +471,7 @@ form {
     button {
       border-radius: 6px;
       display: block;
-      background: rgb(51, 182, 255);
+      background: $button;
       color: white;
       font-size: 18px;
       font-family: Overpass;
