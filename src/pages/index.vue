@@ -225,8 +225,12 @@ export default {
     async addDns () {
       this.dnsRegistering = true
       await this.$subdomain.updateDns(this.confirmation.transactionHash)
-      this.dnsRegistering = false
-      this.dnsRegistered = true
+
+      // add some delay until DNS resolves
+      setTimeout(() => {
+        this.dnsRegistering = false
+        this.dnsRegistered = true
+      }, 5000)
     }
   }
 }
