@@ -37,6 +37,8 @@ const apiFactory = (app, $axios, $config) => ({
   },
 
   async checkDomain (subdomain) {
+    subdomain = subdomain.toLocaleLowerCase()
+
     try {
       const subdomainAddress = await this.ens.name(`${subdomain}.crazy.one`).getAddress()
 
@@ -60,6 +62,7 @@ const apiFactory = (app, $axios, $config) => ({
 
   async register (subdomain, twitterUsername) {
     const accounts = await window.ethereum.enable()
+    subdomain = subdomain.toLocaleLowerCase()
 
     try {
       const tx = await this.subdomainRegistrar.methods
