@@ -126,6 +126,7 @@ export default {
   watch: {
     search (val, oldVal) {
       if (val) {
+        this.search = val.replace('.', '')
         this.searchResult = null
         this.confirmation = null
         this.dnsRegistering = false
