@@ -1,240 +1,20 @@
 <template>
   <section class="section">
-    <topnav :account="account" :no-wallet="noWallet" :loading="loading" />
     <div class="container">
       <div class="inner_container">
-        <div class="logo">
-          <img src="/images/crazyone-logo3.svg">
-        </div>
-        <div>
-          <div>
-            <form @submit.prevent="searchName">
-              <i class="icon" />
-              <input v-model="search" class="search" placeholder="Search for a Crazy.ONE name" spellcheck="false">
-              <button :disabled="searchDisabled || (search && search.length < 1)" type="submit">
-                {{ searchText }}
-              </button>
-            </form>
-          </div>
-
-          <div class="priceContainer">
-            <div v-if="hostname" class="hostname">
-              {{ hostname }}
-            </div>
-          </div>
-
-          <div class="search_result_container">
-            <div v-if="searchDisabled" class="search_result">
-              Searching <PulseLoader size="8px" color="#69FABD" />
-            </div>
-
-            <div v-if="searchResult">
-              <div v-if="Number(searchResult.subdomainAddress) !== 0">
-                Sorry, <span class="green">{{ hostname }}</span> is taken<pre>Owner: {{ $utils.oneAddress(searchResult.subdomainAddress) }}</pre>
-              </div>
-              <div v-else class="search_result">
-                <div><span class="green">{{ hostname }}</span> is available.</div>
-                <div v-if="account" class="register_container">
-                  <button v-if="!registering" @click.prevent="getTwitter">
-                    Register for {{ priceFormat(searchResult.price) }} ONE
-                  </button>
-                </div>
-                <div v-else class="register_container">
-                  <button @click="connect()">
-                    Connect
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div v-if="registering" class="search_result">
-              Registering. Please wait <PulseLoader size="8px" color="#69FABD" />
-            </div>
-            <div v-if="confirmation" class="confirmation_result">
-              <div>Subdomain <span class="green">{{ safeHostname }}</span> registered on Harmony</div>
-              <div><span>Linked to: {{ $utils.oneAddress(account) }}</span></div>
-            </div>
-            <div v-if="confirmation" class="confirmation">
-              <a :href="`https://explorer.harmony.one/#/tx/${confirmation.transactionHash}`" target="_blank">Confirmation</a>
-            </div>
-
-            <div class="dnsRegistration">
-              <div v-if="dnsRegistering">
-                Setting up your custom url {{ safeHostname }} <PulseLoader size="8px" color="#69FABD" />
-              </div>
-              <div v-if="dnsRegistered" class="confirmation_result">
-                <a :href="`https://${safeHostname}`" target="_blank">{{ safeHostname }}</a>
-              </div>
-            </div>
-          </div>
+        <div class="white">
+          Under maintenance. Sorry for the inconvenience. Back soon!
         </div>
       </div>
-      <modal name="twitter-modal" :click-to-close="false" :focus-trap="true">
-        <div class="twitter_modal">
-          <div class="twitter_info">
-            Do you want to link this registration to your Twitter profile?
-          </div>
-          <i class="twitter-icon" />
-          <input v-model="twitter" type="text" placeholder="Twitter username" spellcheck="false">
-          <div class="button_container">
-            <button @click="register(true)">
-              <i class="fa fa-check" /> Yes, link it
-            </button>
-            <button @click="register(false)">
-              No, thank you
-            </button>
-          </div>
-        </div>
-      </modal>
     </div>
   </section>
 </template>
 
 <script>
-import Vue from 'vue'
-import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
-import VModal from 'vue-js-modal'
-import topnav from '~/components/topnav.vue'
-
-const punycode = require('punycode/')
-const isValidHostname = require('is-valid-hostname')
-Vue.use(VModal)
 
 export default {
-  components: {
-    topnav,
-    PulseLoader
-  },
   data () {
-    return {
-      account: null,
-      noWallet: false,
-      loading: true,
-      connected: false,
-      searchDisabled: false,
-      search: '',
-      hostname: null,
-      safeHostname: null,
-      searchText: 'Search',
-      connectButton: 'Connect',
-      searchResult: null,
-      price: 0,
-      registering: false,
-      confirmation: null,
-      twitter: null,
-      dnsRegistering: false,
-      dnsRegistered: false
-    }
-  },
-  watch: {
-    search (val, oldVal) {
-      if (val) {
-        this.search = val.replace('.', '')
-        this.searchResult = null
-        this.confirmation = null
-        this.dnsRegistering = false
-        this.dnsRegistered = false
-        this.validateHostname()
-      } else {
-        this.hostname = null
-      }
-    },
-    twitter (val, oldVal) {
-      if (val) {
-        this.twitter = val.replace('@', '')
-      }
-    }
-  },
-  mounted () {
-    this.init()
-
-    if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
-        if (accounts && accounts.length) {
-          this.account = accounts[0]
-        } else {
-          this.account = null
-        }
-      })
-    }
-  },
-  methods: {
-    priceFormat (price) {
-      return Math.round(Number(price) / 1e18).toLocaleString()
-    },
-    async connect () {
-      const accounts = await this.$subdomain.connect()
-
-      if (accounts && accounts.length) {
-        this.account = accounts[0]
-      }
-    },
-    validateHostname () {
-      this.hostname = `${this.search}.crazy.one`
-    },
-    priceChange (val) {
-      this.price = val
-    },
-    async init () {
-      if (window.ethereum) {
-        this.loading = true
-        const accounts = await this.$subdomain.init()
-        this.loading = false
-
-        if (accounts && accounts.length) {
-          this.account = accounts[0]
-        }
-      } else {
-        this.noWallet = true
-        this.loading = false
-      }
-    },
-    async searchName () {
-      if (!isValidHostname(punycode.toASCII(this.search))) {
-        this.$toast.error('Invalid hostname. Please check format.', { duration: 5000 })
-        return
-      }
-      this.confirmation = null
-      this.searchText = 'Loading'
-      this.searchDisabled = true
-      this.searchResult = await this.$subdomain.checkDomain(this.search)
-      this.searchText = 'Search'
-      this.searchDisabled = false
-    },
-    getTwitter () {
-      this.$modal.show('twitter-modal')
-    },
-    async register (useTwitter) {
-      if (useTwitter) {
-        if (!this.twitter) {
-          console.log('Twitter handle is empty')
-          return
-        }
-      }
-
-      this.$modal.hide('twitter-modal')
-
-      this.safeHostname = this.hostname
-      this.registering = true
-
-      const response = await this.$subdomain.register(this.search, this.twitter)
-      this.search = ''
-      this.registering = false
-      this.searchResult = false
-      this.confirmation = response
-
-      // now do DNS
-      this.addDns()
-    },
-    async addDns () {
-      this.dnsRegistering = true
-      await this.$subdomain.updateDns(this.confirmation.transactionHash)
-
-      // add some delay until DNS resolves
-      setTimeout(() => {
-        this.dnsRegistering = false
-        this.dnsRegistered = true
-      }, 5000)
-    }
+    return {}
   }
 }
 </script>
@@ -245,6 +25,12 @@ $break-small: 800px;
 $green: #69FABD;
 $red: red;
 $button: #1B295E;
+
+.white {
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+}
 
 .loading {
   color: #fff;
