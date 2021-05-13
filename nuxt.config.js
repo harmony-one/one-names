@@ -28,7 +28,7 @@ module.exports = {
       {
         rel: 'stylesheet',
         href:
-          'https://fonts.googleapis.com/css?family=Overpass:100,200,300,400,600,700,800,900|Overpass+Mono:300,400'
+          'https://fonts.googleapis.com/css2?family=Nunito:wght@100;200;600&display=swap'
       }
     ]
   },

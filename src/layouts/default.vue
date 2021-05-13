@@ -6,7 +6,7 @@
 
 <style lang="scss">
 body {
-  font-family: Overpass;
+  font-family: 'Nunito', sans-serif;
   font-size: 16px;
   margin: 0;
   padding: 0;

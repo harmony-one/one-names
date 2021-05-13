@@ -4,7 +4,7 @@
     <div class="container">
       <div class="inner_container">
         <div class="logo">
-          <img src="/images/crazyone-logo2.svg">
+          <img src="/images/crazyone-logo3.svg">
         </div>
         <div>
           <div>
@@ -51,7 +51,7 @@
             </div>
             <div v-if="confirmation" class="confirmation_result">
               <div>Subdomain <span class="green">{{ safeHostname }}</span> registered on Harmony</div>
-              <div><span class="mono">Linked to: {{ $utils.oneAddress(account) }}</span></div>
+              <div><span>Linked to: {{ $utils.oneAddress(account) }}</span></div>
             </div>
             <div v-if="confirmation" class="confirmation">
               <a :href="`https://explorer.harmony.one/#/tx/${confirmation.transactionHash}`" target="_blank">Confirmation</a>
@@ -70,7 +70,9 @@
       </div>
       <modal name="twitter-modal" :click-to-close="false" :focus-trap="true">
         <div class="twitter_modal">
-          <div>Do you want to link this registration to your Twitter profile?</div>
+          <div class="twitter_info">
+            Do you want to link this registration to your Twitter profile?
+          </div>
           <i class="twitter-icon" />
           <input v-model="twitter" type="text" placeholder="Twitter username" spellcheck="false">
           <div class="button_container">
@@ -238,6 +240,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$break-small: 800px;
+
 $green: #69FABD;
 $red: red;
 $button: #1B295E;
@@ -249,6 +253,7 @@ $button: #1B295E;
 
 .green {
   color: $green;
+  font-weight: 600;
 }
 
 .red {
@@ -259,35 +264,42 @@ button {
   cursor: pointer;
 }
 
-.mono {
-  font-family: monospace;
-  font-size: 14px;
-}
-
 .container {
   display: flex;
   justify-content: center;
   align-items: top;
   margin-top: 85px;
-text-align: center;
+  text-align: center;
 }
 
 .inner_container {
   min-width: 60%;
   min-height: 200px;
 
+  @media screen and (max-width: $break-small) {
+    min-width: 90%;
+  }
+
   .logo {
     margin-bottom: 50px;
-    height: 65px;
+    height: 74px;
+
+    @media screen and (max-width: $break-small) {
+      margin-bottom: 0;
+    }
+
     img {
       width: 323px;
+
+      @media screen and (max-width: $break-small) {
+        width: 200px;
+      }
     }
   }
 }
 
 form {
   display: flex;
-  min-width: 780px;
 
   ::placeholder {
     color: #ccc;
@@ -306,6 +318,10 @@ form {
     width: 27px;
     height: 27px;
     background: url(/images/search.svg) no-repeat;
+
+    @media screen and (max-width: $break-small) {
+      display: none;
+    }
   }
 
   button {
@@ -314,11 +330,16 @@ form {
     background: $button;
     color: white;
     font-size: 22px;
-    font-family: Overpass;
     padding: 20px 0px;
     height: 90px;
     width: 162px;
     border: none;
+
+    @media screen and (max-width: $break-small) {
+      height: 50px;
+      padding: 10px 0px;
+      font-size: 18px;
+    }
 
     &:disabled {
       background: rgb(199, 211, 227);
@@ -338,8 +359,15 @@ form {
   border: none;
   border-radius: 0px;
   font-size: 18px;
-  font-family: Overpass;
-  font-weight: 100;
+  font-weight: 100 !important;
+  font-family: 'Nunito', sans-serif !important;
+
+  @media screen and (max-width: $break-small) {
+    font-size: 14px !important;
+    padding: 5px 10px;
+    height: 40px;
+    width: 100%;
+  }
 }
 
 .priceContainer {
@@ -374,7 +402,6 @@ form {
         background: $button;
         color: white;
         font-size: 18px;
-        font-family: Overpass;
         padding: 6px 20px;
         height: 40px;
         width: auto;
@@ -435,9 +462,13 @@ form {
     color: #ccc;
   }
 
+  .twitter_info {
+    margin-top: 20px;
+  }
+
   .twitter-icon {
     padding: 10px;
-    margin-top: 62px;
+    margin-top: 58px;
     position: absolute;
     margin-left: 15px !important;
     width: 27px;
@@ -455,7 +486,6 @@ form {
     border: none;
     border-radius: 0px;
     font-size: 18px;
-    font-family: Overpass;
     font-weight: 100;
   }
 
@@ -475,7 +505,6 @@ form {
       background: $button;
       color: white;
       font-size: 18px;
-      font-family: Overpass;
       padding: 6px 0px;
       height: 40px;
       width: 162px;

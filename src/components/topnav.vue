@@ -53,10 +53,6 @@ export default {
 
   .account {
     color: #fff;
-
-    span {
-      font-family: monospace;
-    }
   }
 
   ul {
@@ -81,7 +77,6 @@ export default {
     display: block;
     color: white;
     font-size: 16px;
-    font-family: Overpass;
     padding: 2px 0px;
     height: 30px;
     width: 162px;
