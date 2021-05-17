@@ -14,12 +14,20 @@
           </tr>
         </thead>
         <tr v-for="(row, index) in transactions.data.content" :key="index">
-          <td>{{ row.domain }}</td>
-          <td>{{ row.twitter }}</td>
+          <td class="small">
+            {{ row.domain }}
+          </td>
+          <td class="small">
+            {{ row.twitter }}
+          </td>
           <td>{{ row.owner }}</td>
           <td>{{ row.ownerONE }}</td>
-          <td>{{ row.price }}</td>
-          <td>{{ row.expires }}</td>
+          <td class="small">
+            {{ row.price }}
+          </td>
+          <td class="small">
+            {{ row.expires }}
+          </td>
         </tr>
       </table>
       <div class="pagination">
@@ -75,6 +83,8 @@ export default {
 </script>
 
 <style lang="scss">
+$blue: #00b0ef;
+
 body {
   background-color: #fff;
 }
@@ -106,7 +116,7 @@ table {
     th {
       color: #fff;
       line-height: 1.4;
-      background-color: #00b0ef;
+      background-color: $blue;
       padding-top: 18px;
       padding-bottom: 18px;
       border: 1px solid #fff;
@@ -120,7 +130,19 @@ table {
 
     td {
       padding: 10px;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      &.small {
+        max-width: 10px;
+      }
     }
+  }
+
+  tr:nth-of-type(odd) {
+    background: #eee;
   }
 }
 
@@ -129,6 +151,15 @@ table {
 
   span {
     padding-right: 5px;
+  }
+
+  a {
+    text-decoration: none;
+    color: #1B295E;
+
+    &:hover {
+      opacity: 0.5;
+    }
   }
 }
 </style>
