@@ -239,6 +239,12 @@ export default {
 }
 </script>
 
+<style lang="scss">
+body {
+  background-color: #00b0ef;
+}
+</style>
+
 <style lang="scss" scoped>
 $break-small: 800px;
 

@@ -10,6 +10,12 @@
   </section>
 </template>
 
+<style lang="scss">
+body {
+  background-color: #00b0ef;
+}
+</style>
+
 <style lang="scss" scoped>
 .maintenance_text {
   color: white;

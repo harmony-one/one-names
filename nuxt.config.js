@@ -47,7 +47,8 @@ module.exports = {
   plugins: [
     { src: './plugins/subdomain.js' },
     { src: './plugins/utils.js' },
-    { src: './plugins/pluralize.js' }
+    { src: './plugins/pluralize.js' },
+    { src: './plugins/transactions.js' }
   ],
   /*
     ** Nuxt.js dev-modules
