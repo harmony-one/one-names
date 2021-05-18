@@ -1,6 +1,17 @@
 <template>
   <div class="main">
     <h2>Transactions</h2>
+    <div>
+      <span class="dark">{{ totalElements.toLocaleString() }}</span> registered. <span class="dark">$5,432</span> contributed to community DAO.
+    </div>
+
+    <div class="search">
+      <form @submit.prevent="search">
+        <i class="icon" />
+        <input v-model="query" type="text" placeholder="Search for domain or owner address" spellcheck="false">
+      </form>
+    </div>
+
     <div v-if="transactions" class="table-container">
       <table>
         <thead>
@@ -53,8 +64,10 @@ export default {
     return {
       transactions: null,
       totalPages: 0,
+      totalElements: 0,
       size: 20,
-      page: 0
+      page: 0,
+      query: null
     }
   },
   mounted () {
@@ -65,18 +78,15 @@ export default {
       this.transactions = null
       this.transactions = await this.$transactions.list({ size: this.size, page: this.page })
       this.totalPages = this.transactions.data.totalPages
-    },
-    previous () {
-      this.page = this.page - 1
-      this.list()
-    },
-    next () {
-      this.page = this.page + 1
-      this.list()
+      this.totalElements = this.transactions.data.totalElements
     },
     goTo (pageLink) {
       this.page = pageLink - 1
       this.list()
+    },
+    search () {
+      // TODO search
+      console.log(this.query)
     }
   }
 }
@@ -84,6 +94,7 @@ export default {
 
 <style lang="scss">
 $blue: #00b0ef;
+$dark-blue: #1B295E;
 
 body {
   background-color: #fff;
@@ -96,6 +107,46 @@ body {
   align-items: center;
   width: 80%;
   margin: 0 auto;
+}
+
+.dark {
+  font-weight: bold;
+  color: $dark-blue;
+}
+
+.search {
+  width: 50%;
+
+  ::placeholder {
+    color: #ccc;
+  }
+
+  i {
+    position: absolute;
+    font-size: 30px;
+    color: #ccc;
+  }
+
+  .icon {
+    padding: 10px;
+    margin-top: 60px;
+    margin-left: 12px;
+    width: 3px;
+    height: 3px;
+    background: url(/images/search.svg) no-repeat;
+    background-size: contain;
+  }
+
+  input {
+    font-family: 'Nunito', sans-serif !important;
+    margin-top: 50px;
+    font-size: 18px !important;
+    padding: 10px 10px 10px 50px;
+    width: 100%;
+    border: 1px solid $blue;
+    font-size: 18px;
+    font-weight: 100;
+  }
 }
 
 .table-container {
@@ -155,10 +206,10 @@ table {
 
   a {
     text-decoration: none;
-    color: #1B295E;
+    color: $blue;
 
     &:hover {
-      opacity: 0.5;
+      color: $dark-blue;
     }
   }
 }
