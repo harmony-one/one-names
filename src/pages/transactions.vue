@@ -7,8 +7,13 @@
 
     <div class="search">
       <form @submit.prevent="list(true)">
-        <i class="icon" />
-        <input v-model="search" type="text" placeholder="Search for domain or owner address" spellcheck="false">
+        <div class="search-container">
+          <i class="icon" />
+          <input id="search" v-model="search" type="search" placeholder="Search for domain or owner address" spellcheck="false">
+          <button type="submit">
+            Search
+          </button>
+        </div>
       </form>
     </div>
 
@@ -19,7 +24,6 @@
             <th>Domain</th>
             <th>Twitter</th>
             <th>Owner</th>
-            <th>OwnerONE</th>
             <th>Price</th>
             <th>Expires</th>
           </tr>
@@ -31,8 +35,14 @@
           <td class="small">
             {{ row.twitter }}
           </td>
-          <td>{{ row.owner }}</td>
-          <td>{{ row.ownerONE }}</td>
+          <td>
+            <div>
+              <a :href="`https://explorer.harmony.one/#/address/${row.owner}`" target="_blank">{{ row.owner }}</a>
+            </div>
+            <div>
+              <a :href="`https://explorer.harmony.one/#/address/${row.ownerONE}`" target="_blank">{{ row.ownerONE }}</a>
+            </div>
+          </td>
           <td class="small">
             {{ row.price }}
           </td>
@@ -84,10 +94,19 @@ export default {
     }
   },
   mounted () {
+    const vm = this
+    document.querySelector('#search').addEventListener('search', function () {
+      if (!vm.search) {
+        vm.clear()
+      }
+    })
     this.list(false)
     this.stats()
   },
   methods: {
+    clear () {
+      this.list(true)
+    },
     async list (newSearch) {
       if (newSearch) {
         this.page = 0
@@ -149,6 +168,12 @@ body {
   font-weight: bold;
 }
 
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-top: 50px;
+}
+
 .search {
   width: 50%;
 
@@ -156,15 +181,20 @@ body {
     color: #ccc;
   }
 
-  i {
-    position: absolute;
-    font-size: 30px;
-    color: #ccc;
+  button {
+    border-radius: 0px 6px 6px 0px;
+    display: block;
+    background: $dark-blue;
+    color: white;
+    height: 46px;
+    width: 162px;
+    border: none;
+    cursor: pointer;
   }
 
   .icon {
+    position: absolute;
     padding: 10px;
-    margin-top: 60px;
     margin-left: 12px;
     width: 3px;
     height: 3px;
@@ -174,11 +204,11 @@ body {
 
   input {
     font-family: 'Nunito', sans-serif !important;
-    margin-top: 50px;
     font-size: 18px !important;
     padding: 10px 10px 10px 50px;
-    width: 100%;
+    width: 95%;
     border: 1px solid $blue;
+    border-right: 0;
     font-size: 18px;
     font-weight: 100;
   }
@@ -228,9 +258,9 @@ table {
     }
   }
 
-  tr:nth-of-type(odd) {
-    background: #eee;
-  }
+  // tr:nth-of-type(odd) {
+  //   background: #eee;
+  // }
 }
 
 .pagination {
@@ -239,14 +269,14 @@ table {
   span {
     padding-right: 5px;
   }
+}
 
-  a {
-    text-decoration: none;
+a {
+  text-decoration: none;
+  color: $dark-blue;
+
+  &:hover {
     color: $blue;
-
-    &:hover {
-      color: $dark-blue;
-    }
   }
 }
 </style>
