@@ -36,12 +36,7 @@
             {{ row.twitter }}
           </td>
           <td>
-            <div>
-              <a :href="`https://explorer.harmony.one/#/address/${row.owner}`" target="_blank">{{ row.owner }}</a>
-            </div>
-            <div>
-              <a :href="`https://explorer.harmony.one/#/address/${row.ownerONE}`" target="_blank">{{ row.ownerONE }}</a>
-            </div>
+            <a :href="`https://explorer.harmony.one/#/address/${row.ownerONE}`" target="_blank">{{ row.ownerONE }}</a>
           </td>
           <td class="small">
             {{ row.price }}
