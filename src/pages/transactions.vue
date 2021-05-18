@@ -1,18 +1,18 @@
 <template>
   <div class="main">
     <h2>Transactions</h2>
-    <div>
-      <span class="dark">{{ totalElements.toLocaleString() }}</span> registered. <span class="dark">$5,432</span> contributed to community DAO.
+    <div v-if="totalRegistered > 0">
+      <span class="dark">{{ totalRegistered.toLocaleString() }}</span> registered. <span class="dark">{{ totalFundsRaised.toLocaleString() }}</span> ONEs contributed to community DAO.
     </div>
 
     <div class="search">
-      <form @submit.prevent="search">
+      <form @submit.prevent="list(true)">
         <i class="icon" />
-        <input v-model="query" type="text" placeholder="Search for domain or owner address" spellcheck="false">
+        <input v-model="search" type="text" placeholder="Search for domain or owner address" spellcheck="false">
       </form>
     </div>
 
-    <div v-if="transactions" class="table-container">
+    <div v-if="transactions && transactions.data && transactions.data.content.length > 0" class="table-container">
       <table>
         <thead>
           <tr>
@@ -41,7 +41,10 @@
           </td>
         </tr>
       </table>
-      <div class="pagination">
+      <div class="transaction-count">
+        {{ totalElements.toLocaleString() }} {{ 'transaction' | pluralize(totalElements) }} found
+      </div>
+      <div v-if="totalPages > 1" class="pagination">
         <span v-for="(pageLink, index) in totalPages" :key="index">
           <span v-if="pageLink == (page + 1)">
             <strong>{{ pageLink }}</strong>
@@ -53,6 +56,9 @@
           </span>
         </span>
       </div>
+    </div>
+    <div v-if="search && transactions && transactions.data && transactions.data.content.length < 1" class="no-results">
+      No transactions found.
     </div>
   </div>
 </template>
@@ -67,26 +73,45 @@ export default {
       totalElements: 0,
       size: 20,
       page: 0,
-      query: null
+      totalRegistered: 0,
+      totalFundsRaised: 0,
+      search: null
+    }
+  },
+  head () {
+    return {
+      title: 'Transactions | Crazy.ONE'
     }
   },
   mounted () {
-    this.list()
+    this.list(false)
+    this.stats()
   },
   methods: {
-    async list () {
+    async list (newSearch) {
+      if (newSearch) {
+        this.page = 0
+      }
+
+      const params = { size: this.size, page: this.page }
+
+      if (this.search) {
+        params.search = this.search
+      }
+
       this.transactions = null
-      this.transactions = await this.$transactions.list({ size: this.size, page: this.page })
+      this.transactions = await this.$transactions.list(params)
       this.totalPages = this.transactions.data.totalPages
       this.totalElements = this.transactions.data.totalElements
     },
+    async stats () {
+      const response = await this.$transactions.stats()
+      this.totalRegistered = response.data.totalRegistered
+      this.totalFundsRaised = response.data.totalFundsRaised
+    },
     goTo (pageLink) {
       this.page = pageLink - 1
-      this.list()
-    },
-    search () {
-      // TODO search
-      console.log(this.query)
+      this.list(false)
     }
   }
 }
@@ -112,6 +137,16 @@ body {
 .dark {
   font-weight: bold;
   color: $dark-blue;
+}
+
+.transaction-count {
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.no-results {
+  margin-top: 20px;
+  font-weight: bold;
 }
 
 .search {
@@ -151,6 +186,7 @@ body {
 
 .table-container {
   margin: 20px 0;
+  width: 100%;
 }
 
 table {
